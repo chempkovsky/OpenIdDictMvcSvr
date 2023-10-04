@@ -1,0 +1,128 @@
+@model OpenIdDictMvcSvr.Dto.AuthorizeDto
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.Extensions.Primitives;
+@using OpenIdDictMvcSvr.Dto;
+@using OpenIdDictMvcSvr.Localizers;
+@inject IHtmlLocalizer<OpenIddictLocalizerResource> SharedLocalizer
+@{
+    List<(string, string?, string?, List<string>)> ScpWithRes = (ViewBag.ScpWithRes as List<(string, string?, string?, List<string>)>) ?? (new List<(string, string?, string?, List<string>)>());
+}
+
+
+
+
+<div class="jumbotron">
+    <h1>Authorization</h1>
+
+    @if (string.IsNullOrEmpty(Model.UserCode) || !string.IsNullOrEmpty(Model.Error))
+    {
+        @if (!string.IsNullOrEmpty(Model.Error) && !string.IsNullOrEmpty(Model.ErrorDescription))
+        {
+            <p class="lead text-center alert alert-warning">
+                An error occurred:
+                <br />
+                @Model.ErrorDescription (@Model.Error)
+            </p>
+        }
+
+        <p class="lead text-left">@SharedLocalizer["Enter the user code given by the client application:"]</p>
+
+        <form asp-controller="Authorization" asp-action="Verify" method="get">
+            <div class="form-check">
+                <input class="form-control" name="user_code" type="text" />
+                <br />
+                <input class="btn btn-lg btn-success" type="submit" value="Submit" />
+            </div>
+        </form>
+    }
+    else
+    {
+        <p class="lead text-left">@SharedLocalizer["Do you want to grant"] <strong>@Model.LocalizedApplicationName</strong> @SharedLocalizer["access to your data?"] </p>
+        <p class="lead text-center alert alert-warning">
+            @SharedLocalizer["Make sure that the code displayed on the device is"] <strong>@Model.UserCode</strong>.
+            <br />
+            @SharedLocalizer["If the two codes don't match, press \"No\" to reject the authorization demand."]
+        </p>
+
+        <form asp-controller="OpenIddict" asp-action="Verify" method="post">
+            @* Flow the request parameters so they can be received by the VerifyAccept/VerifyReject actions: *@
+            @foreach (var parameter in Context.Request.HasFormContentType ?
+           (IEnumerable<KeyValuePair<string, StringValues>>)Context.Request.Form : Context.Request.Query)
+            {
+                <input type="hidden" name="@parameter.Key" value="@parameter.Value" />
+            }
+            <input type="hidden" name="ApplicationName" value="@Model.ApplicationName" />
+            @if (Model.PersDataToAuthorize.Count > 0)
+            {
+                <h3>@SharedLocalizer["Personal Data"]</h3>
+                <table class="table table-sm">
+                    <tbody>
+                        @foreach (var PersData in Model.PersDataToAuthorize)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="PersDataToAuthorize" value="@PersData" />
+                                </td>
+                                <td>
+                                    @SharedLocalizer[PersData]
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            @if (Model.RoleToAuthorize.Count > 0)
+            {
+                <h3>@SharedLocalizer["It will act with app roles:"]</h3>
+                <table class="table table-sm">
+                    <tbody>
+                        @foreach (var RoleName in Model.RoleToAuthorize)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="RoleToAuthorize" value="@RoleName" checked="checked" />
+                                </td>
+                                <td>
+                                    @RoleName
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            @if (ScpWithRes.Count > 0)
+            {
+                <h3>@SharedLocalizer["It will work with the resource scopes:"]</h3>
+                <table class="table table-sm">
+                    <tbody>
+                        @foreach (var itm in ScpWithRes)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="ScopesToAuthorize" value="@itm.Item1" checked="checked" />
+                                </td>
+                                <td>
+                                    @itm.Item2 ( @itm.Item3 )
+                                </td>
+                            </tr>
+                            foreach (var res in itm.Item4)
+                            {
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        @res
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            }
+
+
+            <input class="btn btn-lg btn-success" name="submit.Accept" type="submit" value="@SharedLocalizer["Yes"]" />
+            <input class="btn btn-lg btn-danger" name="submit.Deny" type="submit" value="@SharedLocalizer["No"]" />
+        </form>
+    }
+</div>

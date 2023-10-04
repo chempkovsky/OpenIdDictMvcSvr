@@ -1,0 +1,153 @@
+﻿@model OpenIdDictMvcLib.Dto.ClaimDescriptorDto
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization;
+@using OpenIdDictMvcLib.Localizers;
+@inject IHtmlLocalizer<ClaimLocalizerResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Create"];
+    string IdType = ViewBag.IdType ?? "";
+    string PrntId = ViewBag.PrntId ?? "";
+    List<SelectListItem> ClaimValueTypesList = (ViewBag.ClaimValueTypesList as List<SelectListItem>) ?? (new List<SelectListItem>());
+    List<SelectListItem> ClaimTypesList = (ViewBag.ClaimTypesList as List<SelectListItem>) ?? (new List<SelectListItem>());
+    List<KeyValuePair<string, string>> ClaimProperties = (Model.ClaimProperties as List<KeyValuePair<string, string>>) ?? (new List<KeyValuePair<string, string>>());
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@SharedLocalizer["Home"]</a></li>
+        @if ((IdType == "user") && (!string.IsNullOrEmpty(PrntId)))
+        {
+            <li class="breadcrumb-item"><a asp-controller="Users" asp-action="Index">@SharedLocalizer["Users"]</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Claims" asp-action="Index" asp-route-idtype="@IdType" asp-route-prntid="@PrntId">@SharedLocalizer["Claims"]</a></li>
+        }
+        else if ((IdType == "role") && (!string.IsNullOrEmpty(PrntId)))
+        {
+            <li class="breadcrumb-item"><a asp-controller="Roles" asp-action="Index">@SharedLocalizer["Roles"]</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Claims" asp-action="Index" asp-route-idtype="@IdType" asp-route-prntid="@PrntId">@SharedLocalizer["Claims"]</a></li>
+        }
+        <li class="breadcrumb-item active" aria-current="page">@SharedLocalizer["New Claim"]</li>
+    </ol>
+</nav>
+
+<h1>@SharedLocalizer["Create"]</h1>
+
+<h4>@SharedLocalizer["New Claim"]</h4>
+
+<hr />
+<form asp-action="Create" asp-route-idtype="@IdType" asp-route-prntid="@PrntId">
+    <div class="row">
+        <div class="col-md-6">
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ClaimType" class="control-label"></label>
+                <input asp-for="ClaimType" list="ClaimTypesListID" class="form-control" />
+                <datalist id="ClaimTypesListID" asp-items="ClaimTypesList">
+                    @foreach (var itm in ClaimTypesList)
+                    {
+                        <option value="@itm.Value">@itm.Text</option>
+                    }
+                </datalist>
+                
+                <span asp-validation-for="ClaimType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Issuer" class="control-label"></label>
+                <input asp-for="Issuer" class="form-control" />
+                <span asp-validation-for="Issuer" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OriginalIssuer" class="control-label"></label>
+                <input asp-for="OriginalIssuer" class="form-control" />
+                <span asp-validation-for="OriginalIssuer" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClaimValue" class="control-label"></label>
+                <input asp-for="ClaimValue" class="form-control" />
+                <span asp-validation-for="ClaimValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClaimValueType" class="control-label"></label>
+                <select asp-for="ClaimValueType" class="form-control" asp-items="ClaimValueTypesList"></select>
+                <span asp-validation-for="ClaimValueType" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="table-responsive text-nowrap">
+                <table class="table table-sm" border="1">
+                    <tbody id="csmprmts">
+                        <tr>
+                            <td class="w-25">
+                                <a id="csmprmtsAdd" class="btn btn-outline-info btn-sm" onclick="return clmprpAddFnc(this);">@SharedLocalizer["Add"]</a>
+                            </td>
+                            <td class="w-25">
+                                @SharedLocalizer["Property Key"]
+                            </td>
+                            <td class="w-50">
+                                @SharedLocalizer["Property Value"]
+                            </td>
+                        </tr>
+                        @{
+                            int i0 = 0;
+                            foreach (var cpitm in ClaimProperties)
+                            {
+                                <tr>
+                                    <td>
+                                        <a class="btn btn-outline-danger btn-sm" onclick="return clmprpDelFnc(this)">@SharedLocalizer["Delete"]</a>
+                                    </td>
+                                    <td>
+                                        <div class="form-group" name>
+                                <!--
+                                            <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                                   data-val-required="@SharedLocalizer["The Claim Propertie Key field is required."]"
+                                                   value="@cpitm.Key"
+                                                   id="@("ClaimProperties_"+i0+"_Key")" name="@("ClaimProperties[" + i0 + "].Key")" />
+                                -->
+                                            <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                                   data-val-required="@SharedLocalizer["The Claim Propertie Key field is required."]"
+                                                   value="@cpitm.Key"
+                                                   name="@("ClaimProperties[" + i0 + "].Key")" />
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="@("ClaimProperties[" + i0 + "].Key")" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                <!--
+                                            <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                                   data-val-required="@SharedLocalizer["The Claim Propertie Value field is required."]"
+                                                   value="@cpitm.Value"
+                                                   id="@("ClaimProperties_"+i0+"_Value")" name="@("ClaimProperties[" + i0 + "].Value")" />
+                                -->
+                                            <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                                   data-val-required="@SharedLocalizer["The Claim Propertie Value field is required."]"
+                                                   value="@cpitm.Value"
+                                                   name="@("ClaimProperties[" + i0 + "].Value")" />
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="@("ClaimProperties[" + i0 + "].Value")" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                i0++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <p>
+        <div class="form-group">
+            <input type="submit" value="@SharedLocalizer["Create"]" class="btn btn-primary btn-sm" />
+            <a asp-action="Index" class="btn btn-outline-info btn-sm" asp-route-idtype="@IdType" asp-route-prntid="@PrntId">@SharedLocalizer["Back to List"]</a>
+        </div>
+    </p>
+
+</form>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+@await Html.PartialAsync("_ClaimCreateUpdateScript")

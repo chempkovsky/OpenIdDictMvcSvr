@@ -1,0 +1,54 @@
+﻿@model IEnumerable<OpenIdDictMvcLib.Dto.IdentityUserRoleDto>
+
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization;
+@using OpenIdDictMvcLib.Localizers;
+
+@inject IHtmlLocalizer<UserRoleLocalizerResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["User Roles"];
+    string userid = ViewBag.UserId;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@SharedLocalizer["Home"]</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Users" asp-action="Index">@SharedLocalizer["Users"]</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@SharedLocalizer["User Roles"]</li>
+    </ol>
+</nav>
+
+
+<h1>@SharedLocalizer["User Roles"]</h1>
+
+<p>
+    <a class="btn btn-primary btn-sm" asp-action="Create" asp-route-userid="@userid">@SharedLocalizer["Add Roles"]</a>
+    <a class="btn btn-outline-info btn-sm" asp-controller="Users" asp-action="Index" >@SharedLocalizer["Back to Users"]</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RoleName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoleName)
+            </td>
+            <td>
+                <form asp-action="Delete" asp-route-id="@item.Id" asp-route-rolename="@item.RoleName" method="post">
+                    <button type="submit" class="btn btn-sm btn-danger">@SharedLocalizer["Delete"]</button>
+                </form>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

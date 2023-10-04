@@ -1,0 +1,266 @@
+﻿@model OpenIdDictMvcLib.Dto.OpenIddictApplicationDescriptorDto
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization;
+@using OpenIdDictMvcLib.Localizers;
+@inject IHtmlLocalizer<OpenIddictAppLocalizerResource> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Edit"];
+    List<SelectListItem> ConsentTypesList = ViewBag.ConsentTypesList as List<SelectListItem> ?? new();
+    List<SelectListItem> ClientTypesList = ViewBag.ClientTypesList as List<SelectListItem> ?? new();
+    MultiSelectList PermissionsList = ViewBag.PermissionsList as MultiSelectList ?? new(new List<SelectListItem>());
+    MultiSelectList RequirementsList = ViewBag.RequirementsList as MultiSelectList ?? new(new List<SelectListItem>());
+    string[] CustomPermissions = ViewBag.CustomPermissions as string[] ?? (new string[] { });
+    string[] PostLogoutRedirectUris = ViewBag.PostLogoutRedirectUris as string[] ?? (Array.Empty<String>());
+    string[] RedirectUris = ViewBag.RedirectUris as string[] ?? (Array.Empty<String>());
+    List<KeyValuePair<string, string>> DisplayNames = (ViewBag.DisplayNames as List<KeyValuePair<string, string>>) ?? (new List<KeyValuePair<string, string>>());
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@SharedLocalizer["Home"]</a></li>
+        <li class="breadcrumb-item"><a asp-controller="OpenIddictApps" asp-action="Index">@SharedLocalizer["Applications"]</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@SharedLocalizer["Edit Application"]</li>
+    </ol>
+</nav>
+
+@* <h3>@SharedLocalizer["Edit"]</h3> *@
+
+<h4>@SharedLocalizer["Edit Application"]</h4>
+<hr />
+
+<form asp-action="Edit">
+    <div class="row">
+        <div class="col-sm-6">
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="row">
+                <div class="form-group col-sm-6">
+                    <label asp-for="AppId" class="control-label"></label>
+                    <input asp-for="AppId" class="form-control" readonly="@(true)" />
+                    <span asp-validation-for="AppId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <label asp-for="ClientId" class="control-label"></label>
+                    <input asp-for="ClientId" class="form-control" />
+                    <span asp-validation-for="ClientId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ClientSecret" class="control-label"></label>
+                <input asp-for="ClientSecret" class="form-control" />
+                <span asp-validation-for="ClientSecret" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DisplayName" class="control-label"></label>
+                <input asp-for="DisplayName" class="form-control" />
+                <span asp-validation-for="DisplayName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConsentType" class="control-label"></label>
+                <select asp-for="ConsentType" asp-items="ConsentTypesList" class="form-control"></select>
+                <span asp-validation-for="ConsentType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClientType" class="control-label"></label>
+                <select asp-for="ClientType" asp-items="ClientTypesList" class="form-control"></select>
+                <span asp-validation-for="ClientType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Requirements" class="control-label"></label>
+                <select asp-for="Requirements" asp-items="RequirementsList" class="form-control" size="1"></select>
+                <span asp-validation-for="Requirements" class="text-danger"></span>
+            </div>
+
+            <div class="table-responsive text-nowrap">
+                <table class="table table-sm" border="1">
+                    <tbody id="csmprmts">
+                        <tr>
+                            <td class="w-25">
+                                <a id="csmprmtsAdd" class="btn btn-outline-info btn-sm" onclick="return ruAddFnc(this);">@SharedLocalizer["Add"]</a>
+                            </td>
+                            <td class="w-75">
+                                @SharedLocalizer["Redirect Uris"]
+                            </td>
+                        </tr>
+                        @{
+                            int i0 = 0;
+                            foreach (var cpitm in RedirectUris)
+                            {
+                                <tr>
+                                    <td>
+                                        <a class="btn btn-outline-danger btn-sm" onclick="return ruDelFnc(this)">@SharedLocalizer["Delete"]</a>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <!--
+                                            <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                                   data-val-required="@SharedLocalizer["The Redirect Uris field is required."]"
+                                                   value="@cpitm"
+                                                   id="@("RedirectUris_"+i0+"_")" name="@("RedirectUris[" + i0 + "]")" />
+                                            -->
+                                            <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                                   data-val-required="@SharedLocalizer["The Redirect Uris field is required."]"
+                                                   value="@cpitm"
+                                                   name="@("RedirectUris[" + i0 + "]")" />
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="@("RedirectUris[" + i0 + "]")" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                i0++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-responsive text-nowrap">
+                <table class="table table-sm" border="1">
+                    <tbody id="csmprmts">
+                        <tr>
+                            <td class="w-25">
+                                <a id="csmprmtsAdd" class="btn btn-outline-info btn-sm" onclick="return plruAddFnc(this);">@SharedLocalizer["Add"]</a>
+                            </td>
+                            <td class="w-75">
+                                @SharedLocalizer["The Pos Logout Redirect Uris"]
+                            </td>
+                        </tr>
+                        @{
+                            int i1 = 0;
+                            foreach (var cpitm in PostLogoutRedirectUris)
+                            {
+                                <tr>
+                                    <td>
+                                        <a class="btn btn-outline-danger btn-sm" onclick="return plruDelFnc(this)">@SharedLocalizer["Delete"]</a>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <!--
+                                            <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                                   data-val-required="@SharedLocalizer["The Post Logout Redirect Uris field is required."]"
+                                                   value="@cpitm"
+                                                   id="@("PostLogoutRedirectUris_"+i1+"_")" name="@("PostLogoutRedirectUris[" + i1 + "]")" />
+                                            -->
+                                            <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                                   data-val-required="@SharedLocalizer["The Post Logout Redirect Uris field is required."]"
+                                                   value="@cpitm"
+                                                   name="@("PostLogoutRedirectUris[" + i1 + "]")" />
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="@("PostLogoutRedirectUris[" + i1 + "]")" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                i1++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-responsive text-nowrap">
+                <table class="table table-sm" border="1">
+                    <tbody id="cltrdns">
+                        <tr>
+                            <td class="w-25">
+                                <a id="cltrDnAdd" class="btn btn-outline-info btn-sm" onclick="return cltrDnAddFnc(this);">@SharedLocalizer["Add"]</a>
+                            </td>
+                            <td class="w-25">
+                                @SharedLocalizer["Culture language"]
+                            </td>
+                            <td class="w-50">
+                                @SharedLocalizer["Display Name"]
+                            </td>
+                        </tr>
+                        @{
+                            int i3 = 0;
+                            foreach (var cpitm in DisplayNames)
+                            {
+                                <tr>
+                                    <td>
+                                        <a class="btn btn-outline-danger btn-sm" onclick="return cltrDnDelFnc(this)">@SharedLocalizer["Delete"]</a>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                                   data-val-required="@SharedLocalizer["The Culture language field is required."]"
+                                                   value="@cpitm.Key"
+                                                   name="@("DisplayNames[" + i3 + "].Key")" />
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="@("DisplayNames[" + i3 + "].Key")" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="form-group">
+                                            <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                                   data-val-required="@SharedLocalizer["The Display Name field is required."]"
+                                                   value="@cpitm.Value"
+                                                   name="@("DisplayNames[" + i3 + "].Value")" />
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="@("DisplayNames[" + i3 + "].Value")" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                i3++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-responsive text-nowrap">
+                <table class="table table-sm" border="1">
+                    <tbody id="csmprmts">
+                        <tr>
+                            <td class="w-25">
+                                <a id="csmprmtsAdd" class="btn btn-outline-info btn-sm" onclick="return csmprmtsAddFnc(this);">@SharedLocalizer["Add"]</a>
+                            </td>
+                            <td class="w-75">
+                                @SharedLocalizer["Custom Permissions"]
+                            </td>
+                        </tr>
+                        @{
+                            int i2 = 0;
+                            foreach (var cpitm in CustomPermissions)
+                            {
+                                <tr>
+                                    <td>
+                                        <a class="btn btn-outline-danger btn-sm" onclick="return csmprmtsDelFnc(this)">@SharedLocalizer["Delete"]</a>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <!--
+                                                <input class="form-control" value="@cpitm" data-val="true" data-val-required="@SharedLocalizer["The Custom Permissions field is required."]" type="text" id="@("CustomPermissions_" + i2 + "_")" name="@("CustomPermissions[" + i2 + "]")" />
+                                            -->
+                                            <input class="form-control" value="@cpitm" data-val="true" data-val-required="@SharedLocalizer["The Custom Permissions field is required."]" type="text" name="@("CustomPermissions["+i2+"]")" />
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="@("CustomPermissions[" + i2 + "]")" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                i2++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label asp-for="Permissions" class="control-label"></label>
+                <select asp-for="Permissions" asp-items="PermissionsList" class="form-control" size="29"></select>
+                <span asp-validation-for="Permissions" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="@SharedLocalizer["Save"]" class="btn btn-primary btn-sm" />
+        <a asp-action="Index" class="btn btn-outline-info btn-sm">@SharedLocalizer["Back to List"]</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+@await Html.PartialAsync("_AppCreateUpdateScript")

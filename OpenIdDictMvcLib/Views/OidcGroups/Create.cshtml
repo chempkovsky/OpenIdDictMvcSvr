@@ -1,0 +1,58 @@
+﻿@model OpenIdDictMvcLib.Dto.OidcGroupDto
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization;
+@using OpenIdDictMvcLib.Localizers;
+
+@inject IHtmlLocalizer<OidcGroupLocalizerResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Create"];
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@SharedLocalizer["Home"]</a></li>
+        <li class="breadcrumb-item"><a asp-controller="OidcGroups" asp-action="Index">@SharedLocalizer["User groups"]</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@SharedLocalizer["New User group"]</li>
+    </ol>
+</nav>
+<h1>@SharedLocalizer["Create"]</h1>
+
+<h4>@SharedLocalizer["New User group"]</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            
+            <div class="form-group">
+                <label asp-for="OidcGroupId" class="control-label"></label>
+                <input asp-for="OidcGroupId" class="form-control" readonly="@(true)" />
+                <span asp-validation-for="OidcGroupId" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="OidcGroupName" class="control-label"></label>
+                <input asp-for="OidcGroupName" class="form-control" />
+                <span asp-validation-for="OidcGroupName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OidcGroupDisplayName" class="control-label"></label>
+                <input asp-for="OidcGroupDisplayName" class="form-control" />
+                <span asp-validation-for="OidcGroupDisplayName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="@SharedLocalizer["Create"]" class="btn btn-primary btn-sm" />
+                <a asp-action="Index" class="btn btn-outline-info btn-sm">@SharedLocalizer["Back to List"]</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

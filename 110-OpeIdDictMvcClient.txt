@@ -1,0 +1,541 @@
+Steps to create mvc OpenIdDict client
+https://github.com/openiddict/openiddict-core/tree/dev/sandbox/OpenIddict.Sandbox.AspNetCore.Client
+
+read: Authentication cookie lifetime and sliding expiration in ASP.NET Core
+https://brokul.dev/authentication-cookie-lifetime-and-sliding-expiration
+
+Certified OpenID Developer Tools
+https://openid.net/certified-open-id-developer-tools/
+
+options.AllowDeviceCodeFlow();
+https://github.com/openiddict/openiddict-samples/blob/dev/samples/Matty/Matty.Client/Program.cs
+
+IMPLEMENTING OPENID CODE FLOW WITH PKCE USING OPENIDDICT AND ANGULAR
+https://damienbod.com/2017/04/11/implementing-openid-implicit-flow-using-openiddict-and-angular/
+
+==1==
+Create Asp.Net core project. Let's say you name your project "MyOpenIdDictMvcClient".
+==1.1==
+After creating the project the following file will be created automatically:
+"MyOpenIdDictMvcClient.csproj"
+
+
+
+==2==
+In the file "MyOpenIdDictMvcClient.csproj" add the following lines: "<ItemGroup> <PackageReference Include="OpenIddict.AspNetCore" Version="4.7.0" /> </ItemGroup>"
+
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	...
+
+	<ItemGroup>
+		<PackageReference Include="OpenIddict.AspNetCore" Version="4.7.0" />
+	</ItemGroup>
+
+	...
+	 
+</Project>
+
+
+==3==
+In the file "Program.cs" add the following code and modify "Issuer", "ClientId" and "ClientSecret"
+
+                Issuer = new Uri("https://localhost:44395/", UriKind.Absolute),
+                ClientId = "myUniqueAppName",
+                ClientSecret = "901564A5-E7FE-42CB-B10D-61EF6A8F3654",
+
+
+
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+var builder = WebApplication.CreateBuilder(args);
+...
+//
+    #region Authentication and OpenIddict
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        })
+        .AddCookie(options =>
+        {
+            options.LoginPath = "/login";
+            options.LogoutPath = "/logout";
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(50);
+            options.SlidingExpiration = false;
+        });
+
+        builder.Services.AddOpenIddict()
+        .AddClient(options =>
+        {
+            // Note: this sample uses the authorization code and refresh token
+            // flows, but you can enable the other flows if necessary.
+            options.AllowAuthorizationCodeFlow()
+                   .AllowRefreshTokenFlow();
+
+            // Register the signing and encryption credentials used to protect
+            // sensitive data like the state tokens produced by OpenIddict.
+            options.AddDevelopmentEncryptionCertificate()
+                   .AddDevelopmentSigningCertificate();
+
+            // Register the ASP.NET Core host and configure the ASP.NET Core-specific options.
+            options.UseAspNetCore()
+                   .EnableStatusCodePagesIntegration()
+                   .EnableRedirectionEndpointPassthrough()
+                   .EnablePostLogoutRedirectionEndpointPassthrough();
+
+            // Register the System.Net.Http integration and use the identity of the current
+            // assembly as a more specific user agent, which can be useful when dealing with
+            // providers that use the user agent as a way to throttle requests (e.g Reddit).
+            options.UseSystemNetHttp()
+                   .SetProductInformation(typeof(Program).Assembly);
+
+            // Add a client registration matching the client application definition in the server project.
+            options.AddRegistration(new OpenIddictClientRegistration
+            {
+                Issuer = new Uri("https://localhost:44395/", UriKind.Absolute),
+                ProviderName = "Local",
+
+                ClientId = "myUniqueAppName",
+                ClientSecret = "901564A5-E7FE-42CB-B10D-61EF6A8F3654",
+                Scopes = { Scopes.Email, Scopes.Profile, Scopes.OfflineAccess, "mycustomscope1", "mycustomscope2", "mycustomscope3" },
+
+                RedirectUri = new Uri("callback/login/local", UriKind.Relative),
+                PostLogoutRedirectUri = new Uri("callback/logout/local", UriKind.Relative)
+            });
+        }); 
+    #endregion Authentication and OpenIddict
+...
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+
+==4==
+In the "Controllers"-folder add empty mvc controller with the name you like. For example, "AuthenticationController.cs"
+==4.1==
+Declare field:
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+private readonly OpenIddictClientService _service;
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+==4.1==
+Declare constructor:
+
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+        public AuthenticationController(OpenIddictClientService service)
+        {
+            _service = service;
+        }
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+
+==4.2==
+Declare LogIn Endpoint:
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+        [HttpPost("~/login"), ValidateAntiForgeryToken]
+        public ActionResult LogIn(string provider, string returnUrl)
+        {
+            // Note: OpenIddict always validates the specified provider name when handling the challenge operation,
+            // but the provider can also be validated earlier to return an error page or a special HTTP error code.
+            if (!string.Equals(provider, "Local", StringComparison.Ordinal) &&
+                !string.Equals(provider, "Local+GitHub", StringComparison.Ordinal) &&
+                !string.Equals(provider, Providers.GitHub, StringComparison.Ordinal) &&
+                !string.Equals(provider, Providers.Google, StringComparison.Ordinal) &&
+                !string.Equals(provider, Providers.Reddit, StringComparison.Ordinal))
+            {
+                return BadRequest();
+            }
+
+            // The local authorization server sample allows the client to select the external
+            // identity provider that will be used to eventually authenticate the user. For that,
+            // a custom "identity_provider" parameter is sent to the authorization server so that
+            // the user is directly redirected to GitHub (in this case, no login page is shown).
+            if (string.Equals(provider, "Local+GitHub", StringComparison.Ordinal))
+            {
+                var properties = new AuthenticationProperties(new Dictionary<string, string?>
+                {
+                    // Note: when only one client is registered in the client options,
+                    // specifying the issuer URI or the provider name is not required.
+                    [OpenIddictClientAspNetCoreConstants.Properties.ProviderName] = "Local"
+                })
+                {
+                    // Only allow local return URLs to prevent open redirect attacks.
+                    RedirectUri = Url.IsLocalUrl(returnUrl) ? returnUrl : "/",
+
+                    Parameters =
+                {
+                    [Parameters.IdentityProvider] = "GitHub"
+                }
+                };
+
+                // Ask the OpenIddict client middleware to redirect the user agent to the identity provider.
+                return Challenge(properties, OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
+            }
+
+            else
+            {
+                var properties = new AuthenticationProperties(new Dictionary<string, string?>
+                {
+                    // Note: when only one client is registered in the client options,
+                    // specifying the issuer URI or the provider name is not required.
+                    [OpenIddictClientAspNetCoreConstants.Properties.ProviderName] = provider
+                })
+                {
+                    // Only allow local return URLs to prevent open redirect attacks.
+                    RedirectUri = Url.IsLocalUrl(returnUrl) ? returnUrl : "/"
+                };
+
+                // Ask the OpenIddict client middleware to redirect the user agent to the identity provider.
+                return Challenge(properties, OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
+            }
+        }
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+==4.3==
+Declare LogOut Endpoint:
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+        // Note: this controller uses the same callback action for all providers
+        // but for users who prefer using a different action per provider,
+        // the following action can be split into separate actions.
+        [HttpGet("~/callback/login/{provider}"), HttpPost("~/callback/login/{provider}"), IgnoreAntiforgeryToken]
+        public async Task<ActionResult> LogInCallback()
+        {
+            // Retrieve the authorization data validated by OpenIddict as part of the callback handling.
+            var result = await HttpContext.AuthenticateAsync(OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
+
+            // Multiple strategies exist to handle OAuth 2.0/OpenID Connect callbacks, each with their pros and cons:
+            //
+            //   * Directly using the tokens to perform the necessary action(s) on behalf of the user, which is suitable
+            //     for applications that don't need a long-term access to the user's resources or don't want to store
+            //     access/refresh tokens in a database or in an authentication cookie (which has security implications).
+            //     It is also suitable for applications that don't need to authenticate users but only need to perform
+            //     action(s) on their behalf by making API calls using the access token returned by the remote server.
+            //
+            //   * Storing the external claims/tokens in a database (and optionally keeping the essential claims in an
+            //     authentication cookie so that cookie size limits are not hit). For the applications that use ASP.NET
+            //     Core Identity, the UserManager.SetAuthenticationTokenAsync() API can be used to store external tokens.
+            //
+            //     Note: in this case, it's recommended to use column encryption to protect the tokens in the database.
+            //
+            //   * Storing the external claims/tokens in an authentication cookie, which doesn't require having
+            //     a user database but may be affected by the cookie size limits enforced by most browser vendors
+            //     (e.g Safari for macOS and Safari for iOS/iPadOS enforce a per-domain 4KB limit for all cookies).
+            //
+            //     Note: this is the approach used here, but the external claims are first filtered to only persist
+            //     a few claims like the user identifier. The same approach is used to store the access/refresh tokens.
+
+            // Important: if the remote server doesn't support OpenID Connect and doesn't expose a userinfo endpoint,
+            // result.Principal.Identity will represent an unauthenticated identity and won't contain any claim.
+            //
+            // Such identities cannot be used as-is to build an authentication cookie in ASP.NET Core (as the
+            // antiforgery stack requires at least a name claim to bind CSRF cookies to the user's identity) but
+            // the access/refresh tokens can be retrieved using result.Properties.GetTokens() to make API calls.
+            if (result.Principal is not ClaimsPrincipal { Identity.IsAuthenticated: true })
+            {
+                throw new InvalidOperationException("The external authorization data cannot be used for authentication.");
+            }
+
+            // Build an identity based on the external claims and that will be used to create the authentication cookie.
+            var identity = new ClaimsIdentity(authenticationType: "ExternalLogin");
+
+            // By default, OpenIddict will automatically try to map the email/name and name identifier claims from
+            // their standard OpenID Connect or provider-specific equivalent, if available. If needed, additional
+            // claims can be resolved from the external identity and copied to the final authentication cookie.
+            identity.SetClaim(ClaimTypes.Email, result.Principal.GetClaim(ClaimTypes.Email))
+                    .SetClaim(ClaimTypes.Name, result.Principal.GetClaim(ClaimTypes.Name))
+                    .SetClaim(ClaimTypes.NameIdentifier, result.Principal.GetClaim(ClaimTypes.NameIdentifier));
+
+            // Preserve the registration details to be able to resolve them later.
+            identity.SetClaim(Claims.Private.RegistrationId, result.Principal.GetClaim(Claims.Private.RegistrationId))
+                    .SetClaim(Claims.Private.ProviderName, result.Principal.GetClaim(Claims.Private.ProviderName));
+
+            // Build the authentication properties based on the properties that were added when the challenge was triggered.
+#pragma warning disable CS8602 
+            var properties = new AuthenticationProperties(result.Properties.Items)
+            {
+                RedirectUri = result.Properties.RedirectUri ?? "/"
+            };
+#pragma warning restore CS8602 
+
+            // If needed, the tokens returned by the authorization server can be stored in the authentication cookie.
+            //
+            // To make cookies less heavy, tokens that are not used are filtered out before creating the cookie.
+            properties.StoreTokens(result.Properties.GetTokens().Where(token => token switch
+            {
+                // Preserve the access, identity and refresh tokens returned in the token response, if available.
+                {
+                    Name: OpenIddictClientAspNetCoreConstants.Tokens.BackchannelAccessToken or
+                          OpenIddictClientAspNetCoreConstants.Tokens.BackchannelIdentityToken or
+                          OpenIddictClientAspNetCoreConstants.Tokens.RefreshToken
+                } => true,
+
+                // Ignore the other tokens.
+                _ => false
+            }));
+
+            // Ask the default sign-in handler to return a new cookie and redirect the
+            // user agent to the return URL stored in the authentication properties.
+            //
+            // For scenarios where the default sign-in handler configured in the ASP.NET Core
+            // authentication options shouldn't be used, a specific scheme can be specified here.
+            return SignIn(new ClaimsPrincipal(identity), properties);
+        }
+
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+==4.4==
+Declare LogInCallback Endpoint:
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+
+        // Note: this controller uses the same callback action for all providers
+        // but for users who prefer using a different action per provider,
+        // the following action can be split into separate actions.
+        [HttpGet("~/callback/login/{provider}"), HttpPost("~/callback/login/{provider}"), IgnoreAntiforgeryToken]
+        public async Task<ActionResult> LogInCallback()
+        {
+            // Retrieve the authorization data validated by OpenIddict as part of the callback handling.
+            var result = await HttpContext.AuthenticateAsync(OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
+
+            // Multiple strategies exist to handle OAuth 2.0/OpenID Connect callbacks, each with their pros and cons:
+            //
+            //   * Directly using the tokens to perform the necessary action(s) on behalf of the user, which is suitable
+            //     for applications that don't need a long-term access to the user's resources or don't want to store
+            //     access/refresh tokens in a database or in an authentication cookie (which has security implications).
+            //     It is also suitable for applications that don't need to authenticate users but only need to perform
+            //     action(s) on their behalf by making API calls using the access token returned by the remote server.
+            //
+            //   * Storing the external claims/tokens in a database (and optionally keeping the essential claims in an
+            //     authentication cookie so that cookie size limits are not hit). For the applications that use ASP.NET
+            //     Core Identity, the UserManager.SetAuthenticationTokenAsync() API can be used to store external tokens.
+            //
+            //     Note: in this case, it's recommended to use column encryption to protect the tokens in the database.
+            //
+            //   * Storing the external claims/tokens in an authentication cookie, which doesn't require having
+            //     a user database but may be affected by the cookie size limits enforced by most browser vendors
+            //     (e.g Safari for macOS and Safari for iOS/iPadOS enforce a per-domain 4KB limit for all cookies).
+            //
+            //     Note: this is the approach used here, but the external claims are first filtered to only persist
+            //     a few claims like the user identifier. The same approach is used to store the access/refresh tokens.
+
+            // Important: if the remote server doesn't support OpenID Connect and doesn't expose a userinfo endpoint,
+            // result.Principal.Identity will represent an unauthenticated identity and won't contain any claim.
+            //
+            // Such identities cannot be used as-is to build an authentication cookie in ASP.NET Core (as the
+            // antiforgery stack requires at least a name claim to bind CSRF cookies to the user's identity) but
+            // the access/refresh tokens can be retrieved using result.Properties.GetTokens() to make API calls.
+            if (result.Principal is not ClaimsPrincipal { Identity.IsAuthenticated: true })
+            {
+                throw new InvalidOperationException("The external authorization data cannot be used for authentication.");
+            }
+
+            // Build an identity based on the external claims and that will be used to create the authentication cookie.
+            var identity = new ClaimsIdentity(authenticationType: "ExternalLogin");
+
+            // By default, OpenIddict will automatically try to map the email/name and name identifier claims from
+            // their standard OpenID Connect or provider-specific equivalent, if available. If needed, additional
+            // claims can be resolved from the external identity and copied to the final authentication cookie.
+            identity.SetClaim(ClaimTypes.Email, result.Principal.GetClaim(ClaimTypes.Email))
+                    .SetClaim(ClaimTypes.Name, result.Principal.GetClaim(ClaimTypes.Name))
+                    .SetClaim(ClaimTypes.NameIdentifier, result.Principal.GetClaim(ClaimTypes.NameIdentifier));
+
+            // Preserve the registration details to be able to resolve them later.
+            identity.SetClaim(Claims.Private.RegistrationId, result.Principal.GetClaim(Claims.Private.RegistrationId))
+                    .SetClaim(Claims.Private.ProviderName, result.Principal.GetClaim(Claims.Private.ProviderName));
+
+            // Build the authentication properties based on the properties that were added when the challenge was triggered.
+#pragma warning disable CS8602 // –азыменование веро€тной пустой ссылки.
+            var properties = new AuthenticationProperties(result.Properties.Items)
+            {
+                RedirectUri = result.Properties.RedirectUri ?? "/"
+            };
+#pragma warning restore CS8602 // –азыменование веро€тной пустой ссылки.
+
+            // If needed, the tokens returned by the authorization server can be stored in the authentication cookie.
+            //
+            // To make cookies less heavy, tokens that are not used are filtered out before creating the cookie.
+            properties.StoreTokens(result.Properties.GetTokens().Where(token => token switch
+            {
+                // Preserve the access, identity and refresh tokens returned in the token response, if available.
+                {
+                    Name: OpenIddictClientAspNetCoreConstants.Tokens.BackchannelAccessToken or
+                          OpenIddictClientAspNetCoreConstants.Tokens.BackchannelIdentityToken or
+                          OpenIddictClientAspNetCoreConstants.Tokens.RefreshToken
+                } => true,
+
+                // Ignore the other tokens.
+                _ => false
+            }));
+
+            // Ask the default sign-in handler to return a new cookie and redirect the
+            // user agent to the return URL stored in the authentication properties.
+            //
+            // For scenarios where the default sign-in handler configured in the ASP.NET Core
+            // authentication options shouldn't be used, a specific scheme can be specified here.
+            return SignIn(new ClaimsPrincipal(identity), properties);
+        }
+
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+
+==4.4==
+Declare LogOutCallback Endpoint:
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+        // Note: this controller uses the same callback action for all providers
+        // but for users who prefer using a different action per provider,
+        // the following action can be split into separate actions.
+        [HttpGet("~/callback/logout/{provider}"), HttpPost("~/callback/logout/{provider}"), IgnoreAntiforgeryToken]
+        public async Task<ActionResult> LogOutCallback()
+        {
+            // Retrieve the data stored by OpenIddict in the state token created when the logout was triggered.
+            var result = await HttpContext.AuthenticateAsync(OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
+
+            // In this sample, the local authentication cookie is always removed before the user agent is redirected
+            // to the authorization server. Applications that prefer delaying the removal of the local cookie can
+            // remove the corresponding code from the logout action and remove the authentication cookie in this action.
+
+            return Redirect(result!.Properties!.RedirectUri ?? "/");
+        }
+
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+
+==5==
+Modify "Views\Home\Index.cshtml":
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+@using Microsoft.AspNetCore.Authentication;
+@using OpenIddict.Client.AspNetCore;
+@using static OpenIddict.Abstractions.OpenIddictConstants;
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    @if (User?.Identity is { IsAuthenticated: true })
+    {
+        <h1>Welcome, @User.Identity.Name</h1>
+
+        <p>
+            @foreach (var claim in Context.User.Claims)
+            {
+                <div>@claim.Type: <b>@claim.Value</b></div>
+            }
+        </p>
+
+        if (!string.IsNullOrEmpty(Model))
+        {
+            <h3>Payload returned by the controller: @Model</h3>
+        }
+
+        if (User.FindFirst(Claims.Private.ProviderName)?.Value is "Local")
+        {
+            <form asp-action="GetMessage" asp-controller="Home" method="post">
+                <button class="btn btn-lg btn-warning" type="submit">Query the resource controller</button>
+            </form>
+        }
+
+        if (!string.IsNullOrEmpty(await Context.GetTokenAsync(OpenIddictClientAspNetCoreConstants.Tokens.RefreshToken)))
+        {
+            <form asp-action="RefreshToken" asp-controller="Home" method="post">
+                <button class="btn btn-lg btn-warning" type="submit">Refresh the access token</button>
+            </form>
+        }
+
+        <form asp-action="Logout" asp-controller="Authentication" method="post">
+            <button class="btn btn-lg btn-danger" type="submit">Sign out</button>
+        </form>
+    }
+    else
+    {
+        <h1>Welcome, anonymous</h1>
+
+        <form asp-action="Login" asp-controller="Authentication" method="post">
+            <input type="hidden" name="returnUrl" value="@(Context.Request.PathBase + Context.Request.Path + Context.Request.QueryString)" />
+
+            <button class="btn btn-lg btn-success" type="submit" name="provider" value="Local">
+                Sign in using the local OIDC server
+            </button>
+<!--
+            <button class="btn btn-lg btn-success" type="submit" name="provider" value="Local+GitHub">
+                Sign in using the local OIDC server (preferred service: GitHub)
+            </button>
+
+            <button class="btn btn-lg btn-success" type="submit" name="provider" value="GitHub">
+                Sign in using GitHub
+            </button>
+
+            <button class="btn btn-lg btn-success" type="submit" name="provider" value="Google">
+                Sign in using Google
+            </button>
+
+            <button class="btn btn-lg btn-success" type="submit" name="provider" value="Reddit">
+                Sign in using Reddit
+            </button>
+-->
+        </form>
+    }
+</div>
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+
+==6==
+Modify "Controllers\HomeController.cs":
+
+==6.1==
+Modify the constructor:
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+
+==6.2==
+Declare RefreshToken Endpoint:
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+   [Authorize, HttpPost("~/refresh-token"), ValidateAntiForgeryToken]
+    public async Task<ActionResult> RefreshToken(CancellationToken cancellationToken)
+    {
+        // For scenarios where the default authentication handler configured in the ASP.NET Core
+        // authentication options shouldn't be used, a specific scheme can be specified here.
+        var ticket = await HttpContext.AuthenticateAsync();
+        var token = ticket?.Properties.GetTokenValue(Tokens.RefreshToken);
+        if (string.IsNullOrEmpty(token))
+        {
+            return BadRequest();
+        }
+
+        var result = await _service.AuthenticateWithRefreshTokenAsync(new()
+        {
+            CancellationToken = cancellationToken,
+            RefreshToken = token,
+            RegistrationId = ticket.Principal.FindFirst(Claims.Private.RegistrationId)?.Value
+        });
+
+        var properties = new AuthenticationProperties(ticket.Properties.Items)
+        {
+            RedirectUri = null
+        };
+
+        properties.UpdateTokenValue(Tokens.BackchannelAccessToken, result.AccessToken);
+
+        if (!string.IsNullOrEmpty(result.RefreshToken))
+        {
+            properties.UpdateTokenValue(Tokens.RefreshToken, result.RefreshToken);
+        }
+
+        // For scenarios where the default sign-in handler configured in the ASP.NET Core
+        // authentication options shouldn't be used, a specific scheme can be specified here.
+        await HttpContext.SignInAsync(ticket.Principal, properties);
+
+        return View("Index", model: result.AccessToken);
+    }
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+
+==6.3==
+Declare RefreshToken Endpoint:
+``````````````````````````````````````````````````````````````````````````````````````````````````````
+[Authorize, HttpPost("~/message"), ValidateAntiForgeryToken]
+    public async Task<ActionResult> GetMessage(CancellationToken cancellationToken)
+    {
+        // For scenarios where the default authentication handler configured in the ASP.NET Core
+        // authentication options shouldn't be used, a specific scheme can be specified here.
+        var token = await HttpContext.GetTokenAsync(Tokens.BackchannelAccessToken);
+
+        using var client = _httpClientFactory.CreateClient();
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:44395/api/message");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        using var response = await client.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        return View("Index", model: await response.Content.ReadAsStringAsync(cancellationToken));
+    }
+``````````````````````````````````````````````````````````````````````````````````````````````````````

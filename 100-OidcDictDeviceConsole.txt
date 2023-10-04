@@ -1,0 +1,28 @@
+============================================================================
+OidcDictDeviceConsole.csproj
+============================================================================
+setting for the client is in the file
+100-OidcDictDeviceConsole.png
+============================================================================
+this client app does not require database!!!!
+============================================================================
+Rub the server and than run the client
+============================================================================
+
+Device emulator
+==1==
+Device (console app) connects to the OidcServer and obtains the connection code
+`service.ChallengeUsingDeviceAsync(...)`
+==2==
+Device (console app) prints the code of the step 1 to the user. 
+In our case it will be something like the line below
+https://localhost:7067/connect/verify?user_code=5837-9043-3875
+
+Device calls the `service.AuthenticateWithDeviceAsync()`-method and waits for the responce
+==3==
+User with the code of the step 2 starts the browser and logins into the OidcServer
+==4==
+OidcServer sends the the responce to the Device (console app).
+==5==
+Device (console app) is ready to connect to the Resource server
+

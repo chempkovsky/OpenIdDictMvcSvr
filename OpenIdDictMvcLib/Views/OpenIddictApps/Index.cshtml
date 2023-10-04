@@ -1,0 +1,146 @@
+﻿@model IEnumerable<OpenIdDictMvcLib.Dto.OpenIddictAppDto>
+﻿@using OpenIdDictMvcLib.Dto
+
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization;
+@using OpenIdDictMvcLib.Localizers;
+
+@inject IHtmlLocalizer<OpenIddictAppLocalizerResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Applications"];
+    PageDto pager = ViewBag.Pager as PageDto ?? new PageDto() { PrintFrom = 1, PrintTo = 0 };
+    string searchstr = ViewBag.SearchString;
+    if (searchstr == null) searchstr = ""; // prepare for Uri.EscapeDataString
+    string searchbyid = ViewBag.SearchById;
+    if (searchbyid == null) searchbyid = "0";
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@SharedLocalizer["Home"]</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@SharedLocalizer["Applications"]</li>
+    </ol>
+</nav>
+
+<h1>@SharedLocalizer["Applications"]</h1>
+
+@using (Html.BeginForm(FormMethod.Get))
+{
+    <div class="row g-3">
+        <div class="col-auto form-group">
+            @Html.DropDownList("searchby", ViewBag.SearchBy as List<SelectListItem>, htmlAttributes: new { @class = "form-control-sm" })
+        </div>
+        <div class="col-auto form-group">
+            @Html.TextBox("searchstr", searchstr, null, htmlAttributes: new { @class = "form-control-sm" })
+        </div>
+        <div class="col-auto form-group">
+            <input type="submit" value="@SharedLocalizer["Search"]" class="btn btn-info btn-sm" />
+        </div>
+    </div>
+}
+
+<div class="table-responsive text-nowrap" style="overflow-x: visible; overflow-y: visible;">
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <!--
+                <th style="position: sticky; left: 0; z-index: 2; background-color: rgba(255,255,255,1)"></th>
+                -->
+                <th>
+                    <a class="btn btn-primary btn-sm" asp-action="Create">@SharedLocalizer["Create New"]</a>
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ClientId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DisplayName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ClientType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ConsentType)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="dropdown" >
+                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-action="Edit" asp-route-appid="@item.Id">@SharedLocalizer["Edit"]</a></li>
+                                <li><a class="dropdown-item" asp-action="Details" asp-route-appid="@item.Id">@SharedLocalizer["Details"]</a></li>
+                                <li><a class="dropdown-item" asp-action="Delete" asp-route-appid="@item.Id">@SharedLocalizer["Delete"]</a></li>
+                                <li><a class="dropdown-item" asp-controller="OpenIddictAuthorizations" asp-action="Index" asp-route-appid="@item.Id">@SharedLocalizer["Authorizations"]</a></li>
+                                <li><a class="dropdown-item" asp-controller="OpenIddictTokens" asp-action="Index" asp-route-idtype="app" asp-route-prntid="@item.Id">@SharedLocalizer["Application tokens"]</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ClientId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DisplayName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ClientType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ConsentType)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<nav aria-label="Page navigation">
+    <ul class="pagination flex-wrap">
+        <li class="page-item @(pager.CurrentPage > 1 ? " " : " disabled" )">
+            <a asp-route-currpg="1" asp-route-searchby="@searchbyid" asp-route-searchstr="@Uri.EscapeDataString(searchstr)"
+               class="page-link" aria-label="Frist">
+                <span aria-hidden="true">|<</span>
+
+            </a>
+        </li>
+        <li class="page-item @(pager.CurrentPage > 1 ? " " : " disabled" )">
+            <a asp-route-currpg="@(pager.CurrentPage - 1)" asp-route-searchby="@searchbyid" asp-route-searchstr="@Uri.EscapeDataString(searchstr)"
+               class="page-link" aria-label="Previous">
+                <span aria-hidden="true"><</span>
+
+            </a>
+        </li>
+        @for (var i = pager.PrintFrom; i <= pager.PrintTo; i++)
+        {
+            <li class="page-item @(i == pager.CurrentPage ? "active disabled" : "")">
+                <a asp-route-currpg="@i" asp-route-searchby="@searchbyid" asp-route-searchstr="@Uri.EscapeDataString(searchstr)"
+                   class="page-link">@i</a>
+            </li>
+        }
+        <li class="page-item @(pager.CurrentPage < pager.PageCount ? " " : " disabled" )">
+            <a asp-route-currpg="@(pager.CurrentPage + 1)" asp-route-searchby="@searchbyid" asp-route-searchstr="@Uri.EscapeDataString(searchstr)"
+               class="page-link" aria-label="Next">
+                <span aria-hidden="true">></span>
+
+            </a>
+        </li>
+        <li class="page-item @(pager.CurrentPage < pager.PageCount ? " " : " disabled" )">
+            <a asp-route-currpg="@pager.PageCount" asp-route-searchby="@searchbyid" asp-route-searchstr="@Uri.EscapeDataString(searchstr)"
+               class="page-link" aria-label="Last">
+                <span aria-hidden="true">>|</span>
+
+            </a>
+        </li>
+    </ul>
+</nav>

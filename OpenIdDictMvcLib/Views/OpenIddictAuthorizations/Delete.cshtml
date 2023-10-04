@@ -1,0 +1,94 @@
+﻿@model OpenIdDictMvcLib.Dto.OpenIddictAuthorizationDescriptorDto
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization;
+@using OpenIdDictMvcLib.Localizers;
+@inject IHtmlLocalizer<OpenIddictAuthorizationLocalizerResource> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Delete"];
+    string[] ScopesList = ViewBag.ScopesList as string[] ?? Array.Empty<string>();
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@SharedLocalizer["Home"]</a></li>
+        <li class="breadcrumb-item"><a asp-controller="OpenIddictApps" asp-action="Index">@SharedLocalizer["Applications"]</a></li>
+        <li class="breadcrumb-item"><a asp-controller="OpenIddictAuthorizations" asp-action="Index" asp-route-appid="@Model.ApplicationId">@SharedLocalizer["Authorizations"]</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@SharedLocalizer["Delete Authorization"]</li>
+    </ol>
+</nav>
+
+
+<h1>@SharedLocalizer["Delete Authorization"]</h1>
+
+<h3>@SharedLocalizer["Are you sure you want to delete this?"]</h3>
+
+<h4>@SharedLocalizer["Authorization"]</h4>
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AuthorizationId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AuthorizationId)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CreationDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CreationDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Subject)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Subject)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AuthorizationType)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AuthorizationType)
+        </dd>
+    </dl>
+</div>
+<div class="table-responsive text-nowrap">
+    <table class="table table-sm" border="1">
+        <thead>
+            <tr>
+                <th>
+                    @SharedLocalizer["Scopes"]
+                </th>
+            </tr>
+        </thead>
+
+        <tbody id="csmprmts">
+            @foreach (var cpitm in ScopesList)
+            {
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                value="@cpitm" readonly="@(true)" />
+                    </div>
+                </td>
+            </tr>
+            }
+    </table>
+</div>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="AuthorizationId" />
+    <div class="form-group">
+        <input type="submit" value="@SharedLocalizer["Delete"]" class="btn btn-danger btn-sm" />
+        <a asp-action="Index" asp-route-appid="@Model.ApplicationId" class="btn btn-outline-info btn-sm">@SharedLocalizer["Back to List"]</a>
+    </div>
+</form>
+

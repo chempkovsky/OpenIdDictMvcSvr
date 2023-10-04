@@ -1,0 +1,206 @@
+﻿﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using OpenIdDictMvcLib.Localizers;
+
+@inject IHtmlLocalizer<OpenIddictAppLocalizerResource> SharedLocalizer
+
+
+<script type="text/javascript">
+    function commonDelFnc(elem, collectionName) {
+        let tbd = elem.parentElement.parentElement.parentElement;
+        elem.parentElement.parentElement.remove();
+        if (tbd.children.length < 1) return;
+        let cnt = tbd.childElementCount;
+        let crno = 0;
+        for (let i = 1; i < cnt; i++) {
+            if (tbd.children[i].nodeName !== "TR") continue;
+            let tr = tbd.children[i];
+            let trcnt = tr.childElementCount;
+            let spn = null;
+            let inpt = null;
+            for (let j = 0; j < trcnt; j++) {
+                if (tr.children[j].nodeName !== "TD") continue;
+                let td = tr.children[j];
+                let tdcnt = td.childElementCount;
+                for (let k = 0; k < tdcnt; k++) {
+                    spn = null;
+                    inpt = null;
+                    if (td.children[k].nodeName !== "DIV") continue;
+                    let dv = td.children[k];
+                    let dvcnt = dv.childElementCount;
+                    for (let m = 0; m < dvcnt; m++) {
+                        if (dv.children[m].nodeName === "SPAN") {
+                            spn = dv.children[m];
+                        } else if (dv.children[m].nodeName === "INPUT") {
+                            inpt = dv.children[m];
+                        }
+                        if (!(spn === null) && !(inpt === null)) break;
+                    }
+                    if (!(spn === null) && !(inpt === null)) break;
+                }
+                if (!(spn === null) && !(inpt === null)) break;
+            }
+            if ((spn === null) || (inpt === null)) continue;
+            inpt.name = collectionName + "[" + crno + "]";
+            spn.setAttribute("data-valmsg-for", collectionName + "[" + crno + "]");
+            crno = crno + 1;
+        }
+    };
+    function csmprmtsDelFnc(elem) {
+        commonDelFnc(elem, "CustomPermissions");
+    }
+    function csmprmtsAddFnc(elem) {
+        let tbd = elem.parentElement.parentElement.parentElement;
+        let cnt = tbd.childElementCount - 1;
+        var newItem =
+            `<tr >
+                <td>
+                        <a class="btn btn-outline-danger btn-sm" onclick="return csmprmtsDelFnc(this)">@SharedLocalizer["Delete"]</a>
+                </td>
+                <td>
+                    <div class="form-group">
+                            <input class="form-control" data-val="true" data-val-required="@SharedLocalizer["The Custom Permissions field is required."]" type="text"
+                                // id="CustomPermissions_${cnt}_"
+                                name="CustomPermissions[${cnt}]" value=""/>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="CustomPermissions[${cnt}]" data-valmsg-replace="true"></span>
+                        </div>
+                </td>
+            </tr>`;
+        tbd.insertRow().innerHTML = newItem;
+    };
+    function ruDelFnc(elem) {
+        commonDelFnc(elem, "RedirectUris");
+    }
+    function ruAddFnc(elem) {
+        let tbd = elem.parentElement.parentElement.parentElement;
+        let pCnt = tbd.childElementCount - 1;
+        let newPlruItem =
+            `<tr >
+                <td>
+                    <a class="btn btn-outline-danger btn-sm" onclick="return ruDelFnc(this)">@SharedLocalizer["Delete"]</a>
+                </td>
+                <td>
+                    <div class="form-group">
+                            <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                data-val-required="@SharedLocalizer["The Redirect Uris field is required."]"
+                                value=""
+                                // id="@("RedirectUris_${pCnt}_")" 
+                                name="@("RedirectUris[${pCnt}]")" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="RedirectUris[${pCnt}]" data-valmsg-replace="true"></span>
+                    </div>
+                </td>
+            </tr>`;
+        tbd.insertRow().innerHTML = newPlruItem;
+    };
+
+    function plruDelFnc(elem) {
+        commonDelFnc(elem, "PostLogoutRedirectUris");
+    }
+    function plruAddFnc(elem) {
+        let tbd = elem.parentElement.parentElement.parentElement;
+        let pCnt = tbd.childElementCount - 1;
+        let newPlruItem =
+            `<tr >
+                <td>
+                    <a class="btn btn-outline-danger btn-sm" onclick="return plruDelFnc(this)">@SharedLocalizer["Delete"]</a>
+                </td>
+                <td>
+                    <div class="form-group">
+                            <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                data-val-required="@SharedLocalizer["The Post Logout Redirect Uris field is required."]"
+                                value=""
+                                // id="@("PostLogoutRedirectUris_${pCnt}_")" 
+                                name="@("PostLogoutRedirectUris[${pCnt}]")" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="PostLogoutRedirectUris[${pCnt}]" data-valmsg-replace="true"></span>
+                    </div>
+                </td>
+            </tr>`;
+        tbd.insertRow().innerHTML = newPlruItem;
+    };
+    function cltrDnAddFnc(elem) {
+        let tbd = elem.parentElement.parentElement.parentElement;
+        let pCnt = tbd.childElementCount - 1;
+        let newPlruItem =
+            `<tr >
+                <td>
+                    <a class="btn btn-outline-danger btn-sm" onclick="return cltrDnDelFnc(this)">@SharedLocalizer["Delete"]</a>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                            data-val-required="@SharedLocalizer["The Culture language field is required."]"
+                            value="ru-RU"
+                            name="@("DisplayNames[${pCnt}].Key")" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="DisplayNames[${pCnt}].Key" data-valmsg-replace="true"></span>
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                            data-val-required="@SharedLocalizer["The Display Name field is required."]"
+                            value="Имя приложения"
+                            name="@("DisplayNames[${pCnt}].Value")" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="DisplayNames[${pCnt}].Value" data-valmsg-replace="true"></span>
+                    </div>
+                </td>
+            </tr>`;
+        tbd.insertRow().innerHTML = newPlruItem;
+    };
+    function commonkeyValDelFnc(elem, collectionName) {
+        let tbd = elem.parentElement.parentElement.parentElement;
+        elem.parentElement.parentElement.remove();
+        if (tbd.children.length < 1) return;
+        let cnt = tbd.childElementCount;
+        let crno = 0;
+        for (let i = 1; i < cnt; i++) {
+            if (tbd.children[i].nodeName !== "TR") continue;
+            let tr = tbd.children[i];
+            let trcnt = tr.childElementCount;
+            let spn1 = null;
+            let inpt1 = null;
+            let spn2 = null;
+            let inpt2 = null;
+            for (let j = 0; j < trcnt; j++) {
+                if (tr.children[j].nodeName !== "TD") continue;
+                let td = tr.children[j];
+                let tdcnt = td.childElementCount;
+                let spn = null;
+                let inpt = null;
+                for (let k = 0; k < tdcnt; k++) {
+                    if (td.children[k].nodeName !== "DIV") continue;
+                    let dv = td.children[k];
+                    let dvcnt = dv.childElementCount;
+                    for (let m = 0; m < dvcnt; m++) {
+                        if (dv.children[m].nodeName === "SPAN") {
+                            spn = dv.children[m];
+                        } else if (dv.children[m].nodeName === "INPUT") {
+                            inpt = dv.children[m];
+                        }
+                        if (!(spn === null) && !(inpt === null)) break;
+                    }
+                    if (!(spn === null) && !(inpt === null)) break;
+                }
+                if (!(spn === null) && !(inpt === null)) {
+                    if ((spn1 === null) || (inpt1 === null)) {
+                        spn1 = spn;
+                        inpt1 = inpt;
+                    } else {
+                        spn2 = spn;
+                        inpt2 = inpt;
+                        break;
+                    }
+                }
+            }
+            if ((spn1 === null) || (inpt1 === null) || (spn2 === null) || (inpt2 === null)) continue;
+            inpt1.name = collectionName + "[" + crno + "].Key";
+            spn1.setAttribute("data-valmsg-for", collectionName + "[" + crno + "].Key");
+            inpt2.name = collectionName + "[" + crno + "].Value";
+            spn2.setAttribute("data-valmsg-for", collectionName + "[" + crno + "].Value");
+            crno = crno + 1;
+        }
+    };
+    function cltrDnDelFnc(elem) {
+        commonkeyValDelFnc(elem, "DisplayNames");
+    }
+
+
+</script>

@@ -1,0 +1,87 @@
+﻿@model OpenIdDictMvcLib.Dto.OidcScopeDto
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization;
+@using OpenIdDictMvcLib.Localizers;
+@inject IHtmlLocalizer<OidcScopeLocalizerResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Delete"];
+    string IdType = ViewBag.IdType ?? "";
+    string PrntId = ViewBag.PrntId ?? "";
+    string AppName = ViewBag.AppName ?? "";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@SharedLocalizer["Home"]</a></li>
+        @if ((IdType == "user") && (!string.IsNullOrEmpty(PrntId)))
+        {
+            <li class="breadcrumb-item"><a asp-controller="Users" asp-action="Index">@SharedLocalizer["Users"]</a></li>
+            <li class="breadcrumb-item"><a asp-controller="OidcScope" asp-action="Index" asp-route-idtype="@IdType" asp-route-prntid="@PrntId">@SharedLocalizer["User Scopes"]</a></li>
+        }
+        else if ((IdType == "group") && (!string.IsNullOrEmpty(PrntId)))
+        {
+            <li class="breadcrumb-item"><a asp-controller="OidcGroups" asp-action="Index">@SharedLocalizer["Groups"]</a></li>
+            <li class="breadcrumb-item"><a asp-controller="OidcScope" asp-action="Index" asp-route-idtype="@IdType" asp-route-prntid="@PrntId">@SharedLocalizer["Group Scopes"]</a></li>
+        }
+        <li class="breadcrumb-item active" aria-current="page">@SharedLocalizer["Delete"]</li>
+    </ol>
+</nav>
+
+<h1>@SharedLocalizer["Delete"]</h1>
+<h3>@SharedLocalizer["Are you sure you want to delete this?"]</h3>
+@if ((IdType == "user") && (!string.IsNullOrEmpty(PrntId)))
+{
+    <h4>@SharedLocalizer["User Scope"]</h4>
+}
+else if ((IdType == "group") && (!string.IsNullOrEmpty(PrntId)))
+{
+    <h4>@SharedLocalizer["Group Scope"]</h4>
+}
+
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="OidcParentId" class="control-label"></label>
+            <input asp-for="OidcParentId" class="form-control" readonly="@(true)" />
+            <span asp-validation-for="OidcParentId" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="OidcAppName" class="control-label"></label>
+            <input asp-for="OidcAppName" class="form-control" readonly="@(true)" />
+            <span asp-validation-for="OidcAppName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="OidcScopes" class="control-label"></label>
+            <input asp-for="OidcScopes" class="form-control" readonly="@(true)" />
+            <span asp-validation-for="OidcScopes" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="OidcAudiences" class="control-label"></label>
+            <input asp-for="OidcAudiences" class="form-control" readonly="@(true)" />
+            <span asp-validation-for="OidcAudiences" class="text-danger"></span>
+        </div>
+    </div>
+</div>
+<p>
+    <form asp-action="Delete" asp-route-idtype="@IdType" asp-route-prntid="@PrntId" asp-route-oidcappname="@AppName">
+        <input type="submit" value="@SharedLocalizer["Delete"]" class="btn btn-danger btn-sm" />
+        <a asp-action="Index" class="btn btn-outline-info btn-sm" asp-route-idtype="@IdType" asp-route-prntid="@PrntId">@SharedLocalizer["Back to List"]</a>
+    </form>
+
+</p>
+
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+

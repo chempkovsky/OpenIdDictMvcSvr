@@ -1,0 +1,94 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34009.444
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenIdDictMvcSvr", "OpenIdDictMvcSvr\OpenIdDictMvcSvr.csproj", "{1C0B060E-7F75-410B-9EC8-A2C0B98FE032}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Readme", "Readme", "{9A9E7287-76B6-4D77-9DDF-D12A03E3AEEC}"
+	ProjectSection(SolutionItems) = preProject
+		01-IdentityLocalizerResource.cs.txt = 01-IdentityLocalizerResource.cs.txt
+		02-Program.cs.txt = 02-Program.cs.txt
+		03-IdentityLocalizerResource.ru.resx.txt = 03-IdentityLocalizerResource.ru.resx.txt
+		04-AreasIdentityPagesAccount.txt = 04-AreasIdentityPagesAccount.txt
+		05-IEmailSender.txt = 05-IEmailSender.txt
+		06-IdentityRoleDto.txt = 06-IdentityRoleDto.txt
+		07-IdentityUserDto.txt = 07-IdentityUserDto.txt
+		08-IdentityUserRoleDto.txt = 08-IdentityUserRoleDto.txt
+		09-OpenIdDictLibrary.txt = 09-OpenIdDictLibrary.txt
+		100-OidcDictDeviceConsole.png = 100-OidcDictDeviceConsole.png
+		100-OidcDictDeviceConsole.txt = 100-OidcDictDeviceConsole.txt
+		110-OidcMvcClient.png = 110-OidcMvcClient.png
+		110-OidcMvcClient.txt = 110-OidcMvcClient.txt
+		110-OpeIdDictMvcClient.txt = 110-OpeIdDictMvcClient.txt
+		OpenIddictController.cs.2.txt = OpenIddictController.cs.2.txt
+		OpenIddictController.cs.txt = OpenIddictController.cs.txt
+		Verify.cshtml.txt = Verify.cshtml.txt
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OidcDictDeviceConsole", "OidcDictDeviceConsole\OidcDictDeviceConsole.csproj", "{03684517-8D0F-4727-8F78-7C9D07308482}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OidcDictClientCredentialsConsole", "OidcDictClientCredentialsConsole\OidcDictClientCredentialsConsole.csproj", "{E433DD03-4619-4AFF-808B-3BC28E9FBDF0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OidcMvcClient", "OidcMvcClient\OidcMvcClient.csproj", "{B87B659C-9B90-465E-AB7E-CC6AA7E67D04}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OidcWebApiResource", "OidcWebApiResource\OidcWebApiResource.csproj", "{F40A07C6-7280-42CE-883D-02388663860F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OidcWebApiIntrospectionResource", "OidcWebApiIntrospectionResource\OidcWebApiIntrospectionResource.csproj", "{65AC8891-E060-40CC-B984-B74B8D77CC16}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenIdDictMvcLib", "OpenIdDictMvcLib\OpenIdDictMvcLib.csproj", "{F0612F40-45B9-4B22-B7C7-E3ECE5E2C3C6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenIdDictMvcContext", "OpenIdDictMvcContext\OpenIdDictMvcContext.csproj", "{A48AE910-2BE0-4621-B7C2-5E00F18BF402}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIdDictDbMigrator", "OpenIdDictDbMigrator\OpenIdDictDbMigrator.csproj", "{651E4E90-3400-4A2B-8FF8-02A67F2E0B91}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C0B060E-7F75-410B-9EC8-A2C0B98FE032}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C0B060E-7F75-410B-9EC8-A2C0B98FE032}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C0B060E-7F75-410B-9EC8-A2C0B98FE032}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C0B060E-7F75-410B-9EC8-A2C0B98FE032}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03684517-8D0F-4727-8F78-7C9D07308482}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03684517-8D0F-4727-8F78-7C9D07308482}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03684517-8D0F-4727-8F78-7C9D07308482}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03684517-8D0F-4727-8F78-7C9D07308482}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E433DD03-4619-4AFF-808B-3BC28E9FBDF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E433DD03-4619-4AFF-808B-3BC28E9FBDF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E433DD03-4619-4AFF-808B-3BC28E9FBDF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E433DD03-4619-4AFF-808B-3BC28E9FBDF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B87B659C-9B90-465E-AB7E-CC6AA7E67D04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B87B659C-9B90-465E-AB7E-CC6AA7E67D04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B87B659C-9B90-465E-AB7E-CC6AA7E67D04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B87B659C-9B90-465E-AB7E-CC6AA7E67D04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F40A07C6-7280-42CE-883D-02388663860F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F40A07C6-7280-42CE-883D-02388663860F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F40A07C6-7280-42CE-883D-02388663860F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F40A07C6-7280-42CE-883D-02388663860F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65AC8891-E060-40CC-B984-B74B8D77CC16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65AC8891-E060-40CC-B984-B74B8D77CC16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65AC8891-E060-40CC-B984-B74B8D77CC16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65AC8891-E060-40CC-B984-B74B8D77CC16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0612F40-45B9-4B22-B7C7-E3ECE5E2C3C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0612F40-45B9-4B22-B7C7-E3ECE5E2C3C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0612F40-45B9-4B22-B7C7-E3ECE5E2C3C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0612F40-45B9-4B22-B7C7-E3ECE5E2C3C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A48AE910-2BE0-4621-B7C2-5E00F18BF402}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A48AE910-2BE0-4621-B7C2-5E00F18BF402}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A48AE910-2BE0-4621-B7C2-5E00F18BF402}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A48AE910-2BE0-4621-B7C2-5E00F18BF402}.Release|Any CPU.Build.0 = Release|Any CPU
+		{651E4E90-3400-4A2B-8FF8-02A67F2E0B91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{651E4E90-3400-4A2B-8FF8-02A67F2E0B91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{651E4E90-3400-4A2B-8FF8-02A67F2E0B91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{651E4E90-3400-4A2B-8FF8-02A67F2E0B91}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {64387FC4-D1C2-4B2A-888B-43A065DAA78E}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,74 @@
+﻿@model OpenIdDictMvcLib.Dto.AuthorizeDto
+@using Microsoft.Extensions.Primitives
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization;
+@using OpenIdDictMvcLib.Localizers;
+@inject IHtmlLocalizer<OpenIddictLocalizerResource> SharedLocalizer
+@{
+    List<(string, string?, string?, List<string>)> ScpWithRes = (ViewBag.ScpWithRes as List<(string, string?, string?, List<string>)>) ?? (new List<(string, string?, string?, List<string>)>());
+}
+
+<div class="jumbotron">
+    <h1>@SharedLocalizer["Authorization"]</h1>
+
+    <p class="lead text-left">@SharedLocalizer["Do you want to grant"] <strong>@Model.LocalizedApplicationName</strong> @SharedLocalizer["access to your data?"] </p>
+
+    <form asp-controller="OpenIddict" asp-action="Authorize" method="post">
+
+        @* Flow the request parameters so they can be received by the Accept/Reject actions: *@
+        @foreach (var parameter in Context.Request.HasFormContentType ?
+        (IEnumerable<KeyValuePair<string, StringValues>>)Context.Request.Form : Context.Request.Query)
+        {
+            <input type="hidden" name="@parameter.Key" value="@parameter.Value" />
+        }
+
+
+        @if (ScpWithRes.Count > 0)
+        {
+            <h3>@SharedLocalizer["Scopes requested:"]</h3>
+            <table class="table table-sm">
+                <tbody>
+                    @foreach (var itm in ScpWithRes)
+                    {
+                        <tr>
+                            <td>
+                                @if ((itm.Item1 == "openid") || (itm.Item1 == "offline_access") || (itm.Item1 == "profile"))
+                                {
+                                    <input type="checkbox" name="ScopesToAuthorize" value="@itm.Item1" checked="checked" onclick="return false" />
+                                }
+                                else
+                                {
+                                    <input type="checkbox" name="ScopesToAuthorize" value="@itm.Item1" checked="checked" />
+                                }
+                            </td>
+                            <td>
+                                @itm.Item2 ( @itm.Item3 )
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                        foreach (var res in itm.Item4)
+                        {
+                            <tr>
+                                <td>
+                                </td>
+                                <td>
+                                    @SharedLocalizer["With Resource:"]
+                                </td>
+                                <td>
+                                    @res
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        }
+
+
+
+        <input class="btn btn-lg btn-primary" name="submit.Accept" type="submit" value="@SharedLocalizer["Yes"]" />
+        <input class="btn btn-lg btn-danger" name="submit.Deny" type="submit" value="@SharedLocalizer["No"]" />
+    </form>
+</div>

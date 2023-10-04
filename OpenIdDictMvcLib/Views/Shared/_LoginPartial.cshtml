@@ -1,0 +1,54 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<OidcIdentityUser> SignInManager
+@inject UserManager<OidcIdentityUser> UserManager
+
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization;
+@using OpenIdDictMvcContext.Data;
+@using OpenIdDictMvcLib.Localizers;
+
+@inject IHtmlLocalizer<IdentityLocalizerResource> SharedLocalizer
+
+<ul class="navbar-nav">
+@if (SignInManager.IsSignedIn(User))
+{
+
+    <li class="nav-item">
+        <div class="dropdown" style="margin-top:8px">
+            <!--
+                <button class="btn btn-outline-secondary btn-sm btn-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                -->
+            <button class="navbar-toggler-icon btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+            <ul class="dropdown-menu dropdown-menu-left">
+                <li><a class="dropdown-item" asp-controller="OpenIddictApps" asp-action="Index" >@SharedLocalizer["Applications"]</a></li>
+                <li><a class="dropdown-item" asp-controller="OpenIddictScopes"  asp-action="Index" >@SharedLocalizer["Scopes"]</a></li>
+                <li><a class="dropdown-item" asp-controller="Roles" asp-action="Index" >@SharedLocalizer["Roles"]</a></li>
+                <li><a class="dropdown-item" asp-controller="Users" asp-action="Index" >@SharedLocalizer["Users"]</a></li>
+                <li><a class="dropdown-item" asp-controller="OidcGroups" asp-action="Index">@SharedLocalizer["User Groups"]</a></li>
+            </ul>
+        </div>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@SharedLocalizer["Hello"] @User.Identity?.Name!</a>
+
+    </li>
+
+
+    <li class="nav-item">
+        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <button  type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+        </form>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">@SharedLocalizer["Register"]</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">@SharedLocalizer["Login"]</a>
+    </li>
+}
+</ul>

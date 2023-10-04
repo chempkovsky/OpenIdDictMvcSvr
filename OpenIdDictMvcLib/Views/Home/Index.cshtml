@@ -1,0 +1,16 @@
+﻿﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization;
+@using OpenIdDictMvcLib.Localizers;
+
+@inject IHtmlLocalizer<IdentityLocalizerResource> SharedLocalizer
+
+
+@{
+    ViewData["Title"] = SharedLocalizer["Home Page"];
+}
+
+<div class="text-center">
+    <h1 class="display-4">@SharedLocalizer["Welcome"]</h1>
+    <p>@SharedLocalizer["Learn about"] <a href="https://docs.microsoft.com/aspnet/core">@SharedLocalizer["building Web apps with ASP.NET Core"]</a>.</p>
+</div>

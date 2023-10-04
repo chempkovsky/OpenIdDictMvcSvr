@@ -1,0 +1,196 @@
+﻿@page
+@using Duende.AccessTokenManagement.OpenIdConnect;
+@using Duende.AccessTokenManagement;
+@using Microsoft.AspNetCore.Authentication;
+@using System.IdentityModel.Tokens.Jwt;
+@using System.Security.Claims;
+@inject IUserTokenManagementService _tokenManagementService;
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+    bool IsAuthenticated = false;
+    string accessToken = "";
+    string idToken = "";
+    string refreshToken = "";
+    string expires_at = "";
+    string currentDatetime = "";
+    //JwtSecurityToken? jAccessToken = null ;
+    UserToken? jAccessToken = null;
+    
+    JwtSecurityToken? jIdToken = null ;
+    JwtSecurityToken? jRefreshToken = null ;
+    List<Claim>? scopes = null;
+    // string jsonAccessToken = "";
+    if (User.Identity != null)
+    {
+        IsAuthenticated = User.Identity.IsAuthenticated;
+    }
+    if (IsAuthenticated)
+    {
+
+        currentDatetime = DateTime.UtcNow.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffffK");
+        // var handler = new JwtSecurityTokenHandler();
+        // jAccessToken = handler.ReadJwtToken(accessToken);
+        // jIdToken = handler.ReadJwtToken(idToken);
+        // jRefreshToken = handler.ReadJwtToken(refreshToken);
+        //jAccessToken = await _tokenManagementService.GetAccessTokenAsync(User);
+
+        
+
+        //
+        // https://github.com/DuendeSoftware/Duende.AccessTokenManagement/wiki/worker-applications
+        // services.AddClientCredentialsTokenManagement()
+        //     .AddClient("catalog.client", client =>
+        //     {
+        //         client.TokenEndpoint = "https://demo.duendesoftware.com/connect/token";
+        //         client.ClientId = "6f59b670-990f-4ef7-856f-0dd584ed1fac";
+        //         client.ClientSecret = "d0c17c6a-ba47-4654-a874-f6d576cdf799";
+        //         client.Scope = "catalog inventory";
+        //     })
+        //     .AddClient("invoice.client", client =>
+        //     {
+        //         client.TokenEndpoint = "https://demo.duendesoftware.com/connect/token";
+        //         client.ClientId = "ff8ac57f-5ade-47f1-b8cd-4c2424672351";
+        //         client.ClientSecret = "4dbbf8ec-d62a-4639-b0db-aa5357a0cf46";
+        //         client.Scope = "invoice customers";
+        //     });
+        // UserTokenRequestParameters prms = new()
+        // {
+        //     SignInScheme = "",
+        // };
+        // ClientCredentialsToken? jClienAccessToken = null;
+        // jClienAccessToken = await HttpContext.GetClientAccessTokenAsync(prms);
+        //
+
+        jAccessToken = await HttpContext.GetUserAccessTokenAsync();
+        // must be called right after GetClientAccessTokenAsync()-method call since GetUserAccessTokenAsync() refreshes HttpContext
+        accessToken = await HttpContext.GetTokenAsync("access_token") ?? "";
+        idToken = await HttpContext.GetTokenAsync("id_token") ?? "";
+        refreshToken = await HttpContext.GetTokenAsync("refresh_token") ?? "";
+        expires_at = await HttpContext.GetTokenAsync("expires_at") ?? "";
+
+        scopes = User.Claims.Where(c => c.Type == "scope").ToList();
+        
+    }
+}
+
+
+
+
+<div class="text-center">
+    <h4>Welcome</h4>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+@if (IsAuthenticated)
+{
+        <div class="row">
+            <form class="d-inline" asp-page-handler="makecall" method="post">
+                    <button class="btn btn-primary">Make external WebApi method call</button>
+            </form>
+        </div>
+
+    @if (!string.IsNullOrEmpty(Model.ResourceCallResult))
+    {
+        <div class="row"><b>Result:</b></div>
+        <div class="row">
+            <textarea class="col-12" rows="5" name="text" placeholder="Enter text">@Model.ResourceCallResult</textarea>
+        </div>
+    }
+
+    <p/>
+
+        <div class="row">
+            <form class="d-inline" asp-page-handler="WebApiIntrospectionMakecall" method="post">
+                <button class="btn btn-primary">Make external Introspection WebApi method call</button>
+            </form>
+        </div>
+
+    @if (!string.IsNullOrEmpty(Model.IntrospectionResourceCallResult))
+    {
+        <div class="row"><b>Result: </b></div>
+        <div class="row">
+            <textarea class="col-12" rows="5" name="text" placeholder="Enter text">@Model.IntrospectionResourceCallResult</textarea>
+        </div>
+    }
+    
+
+    <p>
+    <span><b>Current UTC DateTime</b></span> <span class="text-info bg-dark">@currentDatetime</span>
+    <span><b>Expires At</b></span> <span class="text-warning bg-dark">@expires_at</span>
+    </p>
+
+    <h3>Claims</h3>
+<div class="table-responsive text-nowrap" >
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Subject</th>
+                    <th>Issuer</th>
+                    <th>OriginalIssuer</th>
+                    <th>ValueType</th>
+                    
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var claim in User.Claims)
+            {
+                <tr>
+
+                        <td>@claim.Type</td>
+                        <td>@claim.Value</td>
+                        <td>@claim.Subject</td>
+                        <td>@claim.Issuer</td>
+                        <td>@claim.OriginalIssuer</td>
+                        <td>@claim.ValueType</td>
+
+                    </tr>
+            }
+        </tbody>
+    </table>
+</div>
+    <h3>Access Token</h3>
+    <p>
+        <pre>
+                @accessToken
+        </pre>
+        @*
+        <span><b>Valid from</b></span> <span>@jAccessToken?.ValidFrom</span>
+        <span><b>Valid to</b></span> <span>@jAccessToken?.ValidTo</span>
+        *@
+        <span><b>Current UTC Time</b></span> <span class="text-info bg-dark">@DateTime.UtcNow.ToString()</span>
+        <span><b>Expiration UTC Time</b></span> <span class="text-warning bg-dark">@jAccessToken?.Expiration</span>
+        <span><b>Access Token Type</b></span> <span>@jAccessToken?.AccessTokenType</span>
+        <span><b>Access Token Scope</b></span> <span>@jAccessToken?.Scope</span>
+        
+    </p>
+    <h3>ID Token</h3>
+    <p>
+        <pre>
+            @idToken
+        </pre>
+        <span><b>Valid from</b></span> <span>@jIdToken?.ValidFrom</span>
+        <span><b>Valid to</b></span> <span>@jIdToken?.ValidTo</span>
+    </p>
+    <h3>Refresh Token</h3>
+    <p>
+        <pre>
+            @refreshToken
+        </pre>
+        <span><b>Valid from</b></span> <span>@jRefreshToken?.ValidFrom</span>
+        <span><b>Valid to</b></span> <span>@jRefreshToken?.ValidTo</span>
+    </p>
+    <h3>Scopes</h3>
+    <p>
+        @if (scopes != null)
+    {
+            foreach (var scope in scopes)
+            {
+                <span><b>@scope.Value</b></span>
+        }
+    }
+    </p>
+
+}
+

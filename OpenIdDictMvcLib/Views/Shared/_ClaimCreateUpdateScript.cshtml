@@ -1,0 +1,94 @@
+﻿﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using OpenIdDictMvcLib.Localizers;
+
+@inject IHtmlLocalizer<ClaimLocalizerResource> SharedLocalizer
+
+<script type="text/javascript">
+    function commonDelFnc(elem, collectionName) {
+        let tbd = elem.parentElement.parentElement.parentElement;
+        elem.parentElement.parentElement.remove();
+        if (tbd.children.length < 1) return;
+        let cnt = tbd.childElementCount;
+        let crno = 0;
+        for (let i = 1; i < cnt; i++) {
+            if (tbd.children[i].nodeName !== "TR") continue;
+            let tr = tbd.children[i];
+            let trcnt = tr.childElementCount;
+            let spn1 = null;
+            let inpt1 = null;
+            let spn2 = null;
+            let inpt2 = null;
+            for (let j = 0; j < trcnt; j++) {
+                if (tr.children[j].nodeName !== "TD") continue;
+                let td = tr.children[j];
+                let tdcnt = td.childElementCount;
+                let spn = null;
+                let inpt = null;
+                for (let k = 0; k < tdcnt; k++) {
+                    if (td.children[k].nodeName !== "DIV") continue;
+                    let dv = td.children[k];
+                    let dvcnt = dv.childElementCount;
+                    for (let m = 0; m < dvcnt; m++) {
+                        if (dv.children[m].nodeName === "SPAN") {
+                            spn = dv.children[m];
+                        } else if (dv.children[m].nodeName === "INPUT") {
+                            inpt = dv.children[m];
+                        }
+                        if (!(spn === null) && !(inpt === null)) break;
+                    }
+                    if (!(spn === null) && !(inpt === null)) break;
+                }
+                if (!(spn === null) && !(inpt === null)) {
+                    if ((spn1 === null) || (inpt1 === null)) {
+                        spn1 = spn;
+                        inpt1 = inpt;
+                    } else {
+                        spn2 = spn;
+                        inpt2 = inpt;
+                        break;
+                    }
+                }
+            }
+            if ((spn1 === null) || (inpt1 === null) || (spn2 === null) || (inpt2 === null)) continue;
+            inpt1.name = collectionName + "[" + crno + "].Key";
+            spn1.setAttribute("data-valmsg-for", collectionName + "[" + crno + "].Key");
+            inpt2.name = collectionName + "[" + crno + "].Value";
+            spn2.setAttribute("data-valmsg-for", collectionName + "[" + crno + "].Value");
+            crno = crno + 1;
+        }
+    };
+    function clmprpDelFnc(elem) {
+        commonDelFnc(elem, "ClaimProperties");
+    }
+    function clmprpAddFnc(elem) {
+        let tbd = elem.parentElement.parentElement.parentElement;
+        let pCnt = tbd.childElementCount - 1;
+        let newPlruItem =
+            `<tr >
+                    <td>
+                        <a class="btn btn-outline-danger btn-sm" onclick="return clmprpDelFnc(this)">@SharedLocalizer["Delete"]</a>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                                <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                    data-val-required="@SharedLocalizer["The Claim Propertie Key field is required."]"
+                                    value=""
+                                    // id="@("ClaimProperties_${pCnt}_Key")" 
+                                    name="@("ClaimProperties[${pCnt}].Key")" />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="ClaimProperties[${pCnt}].Key" data-valmsg-replace="true"></span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                                <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                    data-val-required="@SharedLocalizer["The Claim Propertie Value field is required."]"
+                                    value=""
+                                    // id="@("ClaimProperties_${pCnt}_Value")" 
+                                    name="@("ClaimProperties[${pCnt}].Value")" />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="ClaimProperties[${pCnt}].Value" data-valmsg-replace="true"></span>
+                        </div>
+                    </td>
+                </tr>`;
+        tbd.insertRow().innerHTML = newPlruItem;
+    };
+</script>

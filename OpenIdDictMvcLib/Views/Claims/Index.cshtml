@@ -1,0 +1,95 @@
+﻿@model IEnumerable<OpenIdDictMvcLib.Dto.ClaimDto>
+
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization;
+@using OpenIdDictMvcLib.Localizers;
+@inject IHtmlLocalizer<ClaimLocalizerResource> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Claims"];
+    string IdType = ViewBag.IdType ?? "";
+    string PrntId = (ViewBag.PrntId ?? "").Trim();
+}
+@if ((IdType == "user") && (!string.IsNullOrEmpty(PrntId)))
+{
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@SharedLocalizer["Home"]</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Users" asp-action="Index">@SharedLocalizer["Users"]</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@SharedLocalizer["Claims"]</li>
+        </ol>
+    </nav>
+}
+else if ((IdType == "role") && (!string.IsNullOrEmpty(PrntId)))
+{
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@SharedLocalizer["Home"]</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Roles" asp-action="Index">@SharedLocalizer["Roles"]</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@SharedLocalizer["Claims"]</li>
+        </ol>
+    </nav>
+}
+
+<h1>@SharedLocalizer["Claims"]</h1>
+
+<div class="table-responsive text-nowrap" style="overflow-x: visible; overflow-y: visible;">
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>
+                    @if (((IdType == "user") || (IdType == "role")) && (!string.IsNullOrEmpty(PrntId)))
+                    {
+                    <a class="btn btn-primary btn-sm" asp-action="Create" asp-route-idtype="@IdType" asp-route-prntid="@PrntId">@SharedLocalizer["Create New"]</a>
+                    }
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ClaimType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Issuer)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OriginalIssuer)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ClaimValue)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ClaimValueType)
+                </th>
+            </tr>
+        </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                <div class="dropdown" >
+                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" asp-action="Details" asp-route-idtype="@IdType" asp-route-prntid="@PrntId" asp-route-claimtype="@item.ClaimType" asp-route-claimvalue="@item.ClaimValue">@SharedLocalizer["Details"]</a></li>
+                        <li><a class="dropdown-item" asp-action="Delete" asp-route-idtype="@IdType" asp-route-prntid="@PrntId" asp-route-claimtype="@item.ClaimType" asp-route-claimvalue="@item.ClaimValue">@SharedLocalizer["Delete"]</a></li>
+                    </ul>
+                </div>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClaimType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Issuer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OriginalIssuer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClaimValue)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClaimValueType)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+</div>

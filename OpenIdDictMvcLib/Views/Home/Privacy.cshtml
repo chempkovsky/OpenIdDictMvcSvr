@@ -1,0 +1,13 @@
+﻿﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization;
+@using OpenIdDictMvcLib.Localizers;
+
+@inject IHtmlLocalizer<IdentityLocalizerResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Privacy Policy"];
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>@SharedLocalizer["Use this page to detail your site's privacy policy."]</p>

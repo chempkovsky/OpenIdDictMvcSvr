@@ -1,0 +1,94 @@
+﻿@model OpenIdDictMvcLib.Dto.OpenIddictAuthorizationDescriptorDto
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization;
+@using OpenIdDictMvcLib.Localizers;
+@inject IHtmlLocalizer<OpenIddictAuthorizationLocalizerResource> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Detail"];
+    string[] ScopesList = ViewBag.ScopesList as string[] ?? Array.Empty<string>();
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@SharedLocalizer["Home"]</a></li>
+        <li class="breadcrumb-item"><a asp-controller="OpenIddictApps" asp-action="Index">@SharedLocalizer["Applications"]</a></li>
+        <li class="breadcrumb-item"><a asp-controller="OpenIddictAuthorizations" asp-action="Index" asp-route-appid="@Model.ApplicationId">@SharedLocalizer["Authorizations"]</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@SharedLocalizer["Authorization in detail"]</li>
+    </ol>
+</nav>
+
+<h1>@SharedLocalizer["Detail"]</h1>
+
+<h4>@SharedLocalizer["Authorization in detail"]</h4>
+
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ApplicationId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ApplicationId)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ApplicationId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ApplicationId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CreationDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CreationDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Subject)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Subject)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.AuthorizationType)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.AuthorizationType)
+        </dd>
+    </dl>
+</div>
+<div class="table-responsive text-nowrap">
+    <table class="table table-sm" border="1">
+        <thead>
+            <tr>
+                <th>
+                    @SharedLocalizer["Scopes"]
+                </th>
+            </tr>
+        </thead>
+
+        <tbody id="csmprmts">
+            @foreach (var cpitm in ScopesList)
+            {
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                               value="@cpitm" readonly="@(true)"/>
+                    </div>
+                </td>
+            </tr>
+            }
+    </table>
+</div>
+
+<div>
+    <a asp-action="Index" asp-route-appid="@Model.ApplicationId" class="btn btn-outline-info btn-sm">@SharedLocalizer["Back to List"]</a>
+</div>

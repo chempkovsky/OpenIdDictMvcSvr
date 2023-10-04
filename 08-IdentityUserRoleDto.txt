@@ -1,0 +1,94 @@
+==1==
+Just create the following class
+namespace OpenIdDictMvcSvr.Dto
+{
+    public class IdentityUserRoleDto
+    {
+        [Display(Name = "User ID")]
+        [Required(ErrorMessage = "The User Id field is required.")]
+        public string Id { get; set; } = null!;
+
+
+        [Required(ErrorMessage = "The Role Name field is required.")]
+        [StringLength(256)]
+        [Display(Name = "Role Name")]
+        public string? RoleName { get; set; }
+    }
+}
+
+==3==
+using IdentityUserDto class create Scaffolded-CRUD mvc controller and views
+(remove Delete, Detail and Edit action, but leave DeleteConfirmed - method)
+
+
+==4==
+Added pagination
+4.1. Pay special attention to "asp-route-..."
+asp-route-currpg="@pager.PageCount" 
+asp-route-searchby="@searchbyid" 
+asp-route-searchstr="@Uri.EscapeDataString(searchstr)"
+
+--------------------------------------------------------
+<nav aria-label="Page navigation">
+    <ul class="pagination flex-wrap">
+        <li class="page-item @(pager.CurrentPage > 1 ? " " : " disabled" )">
+            <a asp-route-currpg="1" asp-route-searchby="@searchbyid" asp-route-searchstr="@Uri.EscapeDataString(searchstr)"
+               class="page-link" aria-label="Frist">
+                <span aria-hidden="true">|<</span>
+                
+            </a>
+        </li>
+        <li class="page-item @(pager.CurrentPage > 1 ? " " : " disabled" )">
+            <a asp-route-currpg="@(pager.CurrentPage - 1)" asp-route-searchby="@searchbyid" asp-route-searchstr="@Uri.EscapeDataString(searchstr)"
+               class="page-link" aria-label="Next">
+                <span aria-hidden="true"><</span>
+                
+            </a>
+        </li>
+        @for (var i = pager.PrintFrom; i <= pager.PrintTo; i++)
+        {
+            <li class="page-item @(i == pager.CurrentPage ? "active disabled" : "")">
+                <a asp-route-currpg="@i" asp-route-searchby="@searchbyid" asp-route-searchstr="@Uri.EscapeDataString(searchstr)"
+                    class="page-link">@i</a>
+            </li>
+        }
+        <li class="page-item @(pager.CurrentPage < pager.PageCount ? " " : " disabled" )">
+            <a asp-route-currpg="@(pager.CurrentPage + 1)" asp-route-searchby="@searchbyid" asp-route-searchstr="@Uri.EscapeDataString(searchstr)"
+               class="page-link" aria-label="Previous">
+                <span aria-hidden="true">></span>
+                
+            </a>
+        </li>
+        <li class="page-item @(pager.CurrentPage < pager.PageCount ? " " : " disabled" )">
+            <a asp-route-currpg="@pager.PageCount" asp-route-searchby="@searchbyid" asp-route-searchstr="@Uri.EscapeDataString(searchstr)"
+               class="page-link" aria-label="Last">
+                <span aria-hidden="true">>|</span>
+                
+            </a>
+        </li>
+    </ul>
+</nav>
+--------------------------------------------------------
+
+4.2. Pay special attention to "PageDto"
+--------------------------------------------------------
+            PageDto pager = new PageDto() { PageSize = 10 };
+            if (currpg.HasValue)
+            {
+                pager.CurrentPage = currpg.Value;
+            } else
+            {
+                pager.CurrentPage = 1;
+            }
+...
+
+            int total = await query.CountAsync();
+            pager.PageCount = total / pager.PageSize;
+            if (pager.PageCount * pager.PageSize < total) pager.PageCount++;
+            if ((pager.CurrentPage > pager.PageCount) || (pager.CurrentPage < 1)) pager.CurrentPage = 1;
+            pager.PrintFrom = pager.CurrentPage-2;
+            if (pager.PrintFrom < 1) pager.PrintFrom = 1;
+            pager.PrintTo = pager.PrintFrom + 5;
+            if (pager.PrintTo > pager.PageCount) pager.PrintTo = pager.PageCount;
+            ViewBag.SearchById = SearchById ? "0" : "1";
+--------------------------------------------------------

@@ -1,0 +1,157 @@
+﻿@model OpenIdDictMvcLib.Dto.OpenIddictScopeDescriptorDto
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization;
+@using OpenIdDictMvcLib.Localizers;
+
+@inject IHtmlLocalizer<OpenIddictScopeLocalizerResource> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Edit"];
+    string[] ResourcesList = ViewBag.ResourcesList as string[] ?? Array.Empty<string>();
+    List<KeyValuePair<string, string>> DisplayNames = (ViewBag.DisplayNames as List<KeyValuePair<string, string>>) ?? (new List<KeyValuePair<string, string>>());
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@SharedLocalizer["Home"]</a></li>
+        <li class="breadcrumb-item"><a asp-controller="OpenIddictScopes" asp-action="Index">@SharedLocalizer["Scopes"]</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@SharedLocalizer["Edit Scope"]</li>
+    </ol>
+</nav>
+
+<h1>@SharedLocalizer["Edit"]</h1>
+
+<h4>@SharedLocalizer["Edit Scope"]</h4>
+<hr />
+<form asp-action="Edit">
+    <div class="row">
+        <div class="col-md-8">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ScopeId" class="control-label"></label>
+                <input asp-for="ScopeId" class="form-control" readonly="@(true)"/>
+                <span asp-validation-for="ScopeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DisplayName" class="control-label"></label>
+                <input asp-for="DisplayName" class="form-control" />
+                <span asp-validation-for="DisplayName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="table-responsive text-nowrap">
+                <table class="table table-sm" border="1">
+                    <tbody id="csmprmts">
+                        <tr>
+                            <td class="w-25">
+                                <a id="csmprmtsAdd" class="btn btn-outline-info btn-sm" onclick="return resAddFnc(this);">@SharedLocalizer["Add"]</a>
+                            </td>
+                            <td class="w-75">
+                                @SharedLocalizer["Resources"]
+                            </td>
+                        </tr>
+                        @{
+                            int i0 = 0;
+                            foreach (var cpitm in ResourcesList)
+                            {
+                                <tr>
+                                    <td>
+                                        <a class="btn btn-outline-danger btn-sm" onclick="return resDelFnc(this)">@SharedLocalizer["Delete"]</a>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                <!--
+                                            <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                                   data-val-required="@SharedLocalizer["The Resources field is required."]"
+                                                   value="@cpitm"
+                                                   id="@("Resources_"+i0+"_")" name="@("Resources[" + i0 + "]")" />
+                                -->
+                                            <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                                   data-val-required="@SharedLocalizer["The Resources field is required."]"
+                                                   value="@cpitm"
+                                                   name="@("Resources[" + i0 + "]")" />
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="@("Resources[" + i0 + "]")" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                i0++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-responsive text-nowrap">
+                <table class="table table-sm" border="1">
+                    <tbody id="cltrdns">
+                        <tr>
+                            <td class="w-25">
+                                <a id="cltrDnAdd" class="btn btn-outline-info btn-sm" onclick="return cltrDnAddFnc(this);">@SharedLocalizer["Add"]</a>
+                            </td>
+                            <td class="w-25">
+                                @SharedLocalizer["Culture language"]
+                            </td>
+                            <td class="w-50">
+                                @SharedLocalizer["Display Name"]
+                            </td>
+                        </tr>
+                        @{
+                            int i3 = 0;
+                            foreach (var cpitm in DisplayNames)
+                            {
+                                <tr>
+                                    <td>
+                                        <a class="btn btn-outline-danger btn-sm" onclick="return cltrDnDelFnc(this)">@SharedLocalizer["Delete"]</a>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                                   data-val-required="@SharedLocalizer["The Culture language field is required."]"
+                                                   value="@cpitm.Key"
+                                                   name="@("DisplayNames[" + i3 + "].Key")" />
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="@("DisplayNames[" + i3 + "].Key")" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="form-group">
+                                            <input class="form-control" rows="3" style="white-space: nowrap;" type="text" data-val="true"
+                                                   data-val-required="@SharedLocalizer["The Display Name field is required."]"
+                                                   value="@cpitm.Value"
+                                                   name="@("DisplayNames[" + i3 + "].Value")" />
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="@("DisplayNames[" + i3 + "].Value")" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                i3++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="@SharedLocalizer["Save"]" class="btn btn-primary btn-sm" />
+        <a asp-action="Index" class="btn btn-outline-info btn-sm">@SharedLocalizer["Back to List"]</a>
+    </div>
+</form>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+@await Html.PartialAsync("_ScopeCreateUpdate")

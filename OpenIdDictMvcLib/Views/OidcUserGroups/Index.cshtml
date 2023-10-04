@@ -1,0 +1,60 @@
+﻿@model IEnumerable<OpenIdDictMvcLib.Dto.OidcUserGroupDto>
+
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization;
+@using OpenIdDictMvcLib.Localizers;
+
+@inject IHtmlLocalizer<OidcUserGroupLocalizerResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["User Groups"];
+    string userid = ViewBag.UserId;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@SharedLocalizer["Home"]</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Users" asp-action="Index">@SharedLocalizer["Users"]</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@SharedLocalizer["User Groups"]</li>
+    </ol>
+</nav>
+
+
+<h1>@SharedLocalizer["User Groups"]</h1>
+
+<p>
+    <a class="btn btn-primary btn-sm" asp-action="Create" asp-route-userid="@userid">@SharedLocalizer["Add Groups"]</a>
+    <a class="btn btn-outline-info btn-sm" asp-controller="Users" asp-action="Index" >@SharedLocalizer["Back to Users"]</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.OidcGroupName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OidcGroupDisplayName)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+                <td>
+                    <form asp-action="Delete" asp-route-oidcuserid="@item.OidcUserId" asp-route-oidcgroupid="@item.OidcGroupId" method="post">
+                        <button type="submit" class="btn btn-sm btn-danger">@SharedLocalizer["Delete"]</button>
+                    </form>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OidcGroupName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OidcGroupDisplayName)
+                </td>
+            </tr>
+}
+    </tbody>
+</table>

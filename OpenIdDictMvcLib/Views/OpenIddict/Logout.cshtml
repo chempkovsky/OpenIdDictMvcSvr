@@ -1,0 +1,23 @@
+﻿@model LogoutDto
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.Extensions.Primitives
+@using OpenIdDictMvcLib.Dto;
+@using OpenIdDictMvcLib.Localizers;
+@inject IHtmlLocalizer<OpenIddictLocalizerResource> SharedLocalizer
+
+<div class="jumbotron">
+    <h1>@SharedLocalizer["Log out"]</h1>
+    <p class="lead text-left">@SharedLocalizer["Are you sure you want to sign out?"]</p>
+
+    <form asp-controller="OpenIddict" asp-action="Logout" method="post" class="no-multisubmit">
+        @* Flow the request parameters so they can be received by the Accept/Reject actions: *@
+        @foreach (var parameter in Context.Request.HasFormContentType ?
+        (IEnumerable<KeyValuePair<string, StringValues>>)Context.Request.Form : Context.Request.Query)
+        {
+            <input type="hidden" name="@parameter.Key" value="@parameter.Value" />
+        }
+
+        <input class="btn btn-lg btn-primary" name="submit.Accept" type="submit" value="Yes" />
+        <input class="btn btn-lg btn-danger" name="submit.Deny" type="submit" value="No" />
+    </form>
+</div>

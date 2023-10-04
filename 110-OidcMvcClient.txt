@@ -1,0 +1,142 @@
+============================================================================
+OidcMvcClient.csproj
+============================================================================
+Create mvc app winth auth == None
+```````````````````````````````````````````````````````````
+dotnet new mvc --auth None --name OidcMvcClient
+```````````````````````````````````````````````````````````
+
+==1==
+In the `OidcMvcClient.csproj`- file of the project add the following (for the >>>>>> net.core 6 <<<<<<)
+```````````````````````````````````````````````````````````
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.22" />
+  </ItemGroup>
+ ```````````````````````````````````````````````````````````
+
+==2==
+In the `Program.cs`- file of the project add the following
+```````````````````````````````````````````````````````````
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.HttpOverrides;
+```````````````````````````````````````````````````````````
+
+==3==
+In the `Program.cs`- file of the project right after the line 
+```````````````````````````````````````````````````````````
+var builder = WebApplication.CreateBuilder(args);
+```````````````````````````````````````````````````````````
+add the following
+```````````````````````````````````````````````````````````
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+    })
+    .AddCookie(
+         options => { 
+             options.LoginPath = "/Account/Login/";
+             options.LogoutPath = "/Account/Logout";
+         }
+    )
+    .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, o =>
+    {
+        o.ClientId = "OidcMvcClient";
+        o.ClientSecret = "OidcMvcClient_secrete";
+        o.Authority = "https://localhost:7067/";
+        o.ResponseType = "code"; 
+        o.UsePkce = true;
+        o.GetClaimsFromUserInfoEndpoint = true;
+        o.SignedOutCallbackPath = "/signout-callback-oidc"; // "/signout-callback-oidc" is a default endpoint. Do not use "signout-oidc"
+        o.SignedOutRedirectUri = "/Account/PostLogout";
+    }
+);
+
+
+/*
+// this is an example of the policy declaration
+builder.Services.AddAuthorization(options => {
+    options.AddPolicy("MyPolicy", policy =>
+       policy.RequireAssertion(context =>
+       {
+           bool r = context.User.HasClaim(c => (c.Type == "BadgeId" || c.Type == "TemporaryBadgeId")
+           && c.Issuer == "https://microsoftsecurity");
+           return r;
+       }
+    ));
+});
+*/
+```````````````````````````````````````````````````````````
+==4==
+Create `AccountController.cs`- file in the "Controllers"-folder of the project with a code
+```````````````````````````````````````````````````````````
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Mvc;
+
+namespace OidcMvcClient.Controllers
+{
+    public class AccountController : Controller
+    {
+        [HttpGet]
+        public IActionResult Login()
+        {
+            // defining  "RedirectUri" is important !!!
+            var authProps = new AuthenticationProperties
+            {
+                RedirectUri = "/"
+            };
+            // do not use HttpContext.ChallengeAsync(...)-method call !!! As it will not work.
+            return Challenge(authProps, OpenIdConnectDefaults.AuthenticationScheme);
+        }
+        [HttpGet("~/Account/Logout")]
+        public async Task Logout()
+        {
+            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+        }
+
+        [HttpGet("~/Account/PostLogout")]
+        public async Task<IActionResult> PostLogout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home");
+        }
+    }
+}
+```````````````````````````````````````````````````````````
+==5==
+Modify `\Pages\Shared\_Layout.cshtml`- file of the project with a code
+```````````````````````````````````````````````````````````
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-page="/Index">OidcMvcClient</a>
+...
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+...
+                    @* !!!!!!!!!!!!!!!!! begin insertion !!!!!!!!!!!!!!!!!!!!*@
+                    <ul class="navbar-nav">
+                    @if ((User.Identity == null) || (!(User.Identity.IsAuthenticated)))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Login</a>
+                        </li>
+                    } else {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">Logout</a>
+                        </li>
+                    }
+                    </ul>
+                    @* !!!!!!!!!!!!!!!!! end insertion !!!!!!!!!!!!!!!!!!*@
+                </div>
+
+```````````````````````````````````````````````````````````
+==6==
+With "OpenIdDictMvcSvr"-server create app with the setting as on the picture
+110-OidcMvcClient.png
+
+==7==
+For the user add permission to the scopes of the app!!!!
+

@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="&quot;The OpenID Connect request cannot be retrieved." xml:space="preserve">
+    <value>Запрос OpenID Connect не может быть получен.</value>
+  </data>
+  <data name="access to your data?" xml:space="preserve">
+    <value>доступ к вашим данным?</value>
+  </data>
+  <data name="An error occurred:" xml:space="preserve">
+    <value>Произошла ошибка:</value>
+  </data>
+  <data name="Are you sure you want to sign out?" xml:space="preserve">
+    <value>Вы уверены, что хотите выйти?</value>
+  </data>
+  <data name="Authorization" xml:space="preserve">
+    <value>Авторизация</value>
+  </data>
+  <data name="Details concerning the calling client application cannot be found." xml:space="preserve">
+    <value>Подробности о вызывающем клиентском приложении найти невозможно.</value>
+  </data>
+  <data name="Details concerning the ID of the calling client application cannot be found." xml:space="preserve">
+    <value>Невозможно найти подробную информацию об идентификаторе вызывающего клиентского приложения.</value>
+  </data>
+  <data name="Do you want to grant" xml:space="preserve">
+    <value>Вы хотите предоставить</value>
+  </data>
+  <data name="email" xml:space="preserve">
+    <value>электронная почта</value>
+  </data>
+  <data name="Enter the user code given by the client application:" xml:space="preserve">
+    <value>Введите код пользователя, предоставленный клиентским приложением:</value>
+  </data>
+  <data name="If the two codes don't match, press &quot;No&quot; to reject the authorization demand." xml:space="preserve">
+    <value>Если два кода не совпадают, нажмите «Нет», чтобы отклонить запрос на авторизацию.</value>
+  </data>
+  <data name="Interactive user consent is required." xml:space="preserve">
+    <value>Требуется интерактивное согласие пользователя.</value>
+  </data>
+  <data name="It will act with app roles:" xml:space="preserve">
+    <value>Он будет действовать с ролями приложения:</value>
+  </data>
+  <data name="It will work with the resource scopes:" xml:space="preserve">
+    <value>Он будет работать с областями ресурсов:</value>
+  </data>
+  <data name="Log out" xml:space="preserve">
+    <value>Выйти</value>
+  </data>
+  <data name="Make sure that the code displayed on the device is" xml:space="preserve">
+    <value>Убедитесь, что код, отображаемый на устройстве, совпадает с</value>
+  </data>
+  <data name="name" xml:space="preserve">
+    <value>имя</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="Ooooops, something went really bad! :(" xml:space="preserve">
+    <value>О, что-то пошло совсем не так! :(</value>
+  </data>
+  <data name="Personal Data" xml:space="preserve">
+    <value>Личные данные:</value>
+  </data>
+  <data name="Scope" xml:space="preserve">
+    <value>Область действия</value>
+  </data>
+  <data name="Scopes requested:" xml:space="preserve">
+    <value>Запрошенные области(Scopes):</value>
+  </data>
+  <data name="sub" xml:space="preserve">
+    <value>Предмет</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Принять</value>
+  </data>
+  <data name="The application details cannot be found in the database." xml:space="preserve">
+    <value>Детали приложения не могут быть найдены в базе данных.</value>
+  </data>
+  <data name="The logged in user is not allowed to access this client application." xml:space="preserve">
+    <value>Вошедшему в систему пользователю не разрешен доступ к этому клиентскому приложению.</value>
+  </data>
+  <data name="The OpenID Connect request cannot be retrieved." xml:space="preserve">
+    <value>Запрос OpenID Connect не может быть получен.</value>
+  </data>
+  <data name="The specified user code is not valid. Please make sure you typed it correctly." xml:space="preserve">
+    <value>Указанный код пользователя недействителен. Пожалуйста, убедитесь, что вы ввели его правильно.</value>
+  </data>
+  <data name="The token is no longer valid." xml:space="preserve">
+    <value>Токен больше не действителен.</value>
+  </data>
+  <data name="The user details cannot be retrieved." xml:space="preserve">
+    <value>Данные пользователя не могут быть получены.</value>
+  </data>
+  <data name="The user is no longer allowed to sign in." xml:space="preserve">
+    <value>Пользователю больше не разрешено входить в систему.</value>
+  </data>
+  <data name="The user is not logged in." xml:space="preserve">
+    <value>Пользователь не авторизован.</value>
+  </data>
+  <data name="The username/password couple is invalid." xml:space="preserve">
+    <value>Пара имя пользователя/пароль недействительна.</value>
+  </data>
+  <data name="Unable to obtain Authorizations for this user and client." xml:space="preserve">
+    <value>Невозможно получить Авторизации для данного пользователя и клиента.</value>
+  </data>
+  <data name="With a link to the resource:" xml:space="preserve">
+    <value>Cо ссылкой на ресурс:</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Да</value>
+  </data>
+  <data name="You have not selected any scopes" xml:space="preserve">
+    <value>Вы не выбрали ни одной области действия</value>
+  </data>
+</root>

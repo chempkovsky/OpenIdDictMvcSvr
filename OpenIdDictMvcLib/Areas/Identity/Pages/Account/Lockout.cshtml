@@ -1,0 +1,19 @@
+﻿@page
+@model LockoutModel
+
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization;
+@using OpenIdDictMvcLib.Localizers;
+
+
+@inject IHtmlLocalizer<IdentityLocalizerResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Locked out"];
+}
+
+<header>
+    <h1 class="text-danger">@ViewData["Title"]</h1>
+    <p class="text-danger">@SharedLocalizer["This account has been locked out, please try again later."]</p>
+</header>
