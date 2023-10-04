@@ -108,49 +108,9 @@ builder.Services.AddCors();
 
 
 
-string OidcAllowedScopesRolePrefix = builder.Configuration["OidcAllowedScopes:RolePrefix"];
-if(string.IsNullOrEmpty(OidcAllowedScopesRolePrefix)) OidcAllowedScopesRolePrefix = OidcAllowedScope.RolePrefix + "."; else OidcAllowedScopesRolePrefix += ".";
-string OidcAllowedScopesClaimPrefix = builder.Configuration["OidcAllowedScopes:ClaimPrefix"];
-if (string.IsNullOrEmpty(OidcAllowedScopesClaimPrefix)) OidcAllowedScopesClaimPrefix = OidcAllowedScope.ClaimPrefix + "."; else OidcAllowedScopesClaimPrefix += ".";
-
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Identity/Account/Login";
-
-
-    if ((analizeScopes.AnalizeUserClaims.HasValue && analizeScopes.AnalizeUserClaims.Value) ||
-        (analizeScopes.AnalizeRoleClaims.HasValue && analizeScopes.AnalizeRoleClaims.Value)) {
-        options.Events.OnSigningIn = (ctx) =>
-        {
-            if (ctx.Principal != null)
-            {
-                List<Claim> lst = ctx.Principal.Claims.Where(c => c.Type == ClaimTypes.Role).ToList();
-                foreach (var ñ in lst)
-                {
-                    if (ñ.Value != null)
-                    {
-                        if (ñ.Value.StartsWith(OidcAllowedScopesRolePrefix))
-                        {
-                            foreach (var i in ctx.Principal.Identities)
-                            {
-                                i.TryRemoveClaim(ñ);
-                            }
-                        }
-                    }
-                }
-                lst = ctx.Principal.Claims.Where(c => c.Type.StartsWith(OidcAllowedScopesClaimPrefix)).ToList();
-                foreach (var ñ in lst)
-                {
-                    foreach (var i in ctx.Principal.Identities)
-                    {
-                        i.TryRemoveClaim(ñ);
-                    }
-                }
-            }
-            return Task.CompletedTask;
-        };
-    }
-
 });
 
 // <snippet_EmailSender>
