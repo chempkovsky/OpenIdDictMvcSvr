@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using System.Text;
 
 namespace OpenIdDictMvcLib.Controllers
 {
+    [Authorize(Roles = $"{OidcIdentityConsts.AdminRoleName}")]
     public class OidcUserGroupsController : Controller
     {
         private readonly UserManager<OidcIdentityUser> _userManager;

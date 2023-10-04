@@ -5,13 +5,14 @@ using Microsoft.Extensions.Localization;
 using OpenIddict.Abstractions;
 using OpenIdDictMvcContext.Data;
 using OpenIdDictMvcLib.Dto;
-using System.Net;
 using System.Text;
 using OpenIdDictMvcLib.Localizers;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace OpenIdDictMvcLib.Controllers
 {
+    [Authorize(Roles = $"{OidcIdentityConsts.AdminRoleName}")]
     public class OpenIddictAuthorizationsController : Controller
     {
         private readonly ApplicationDbContext _context;

@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace OpenIdDictMvcContext.Data
 {
     public static class OidcIdentityConsts
     {
-        public static string AdminRoleName = "adminrole";
-        public static string ManagerRoleName = "managerrole";
-        public static string AdminUserName = "admin@gmail.com";
-        public static string ManagerUserName = "manager@gmail.com";
-        public static string Password = "Qwerty123$";
+        public const string AdminRoleName = "adminrole";
+        public const string ManagerRoleName = "managerrole";
+        public const string AdminUserName = "admin@gmail.com";
+        public const string ManagerUserName = "manager@gmail.com";
+        public const string Password = "Qwerty123$";
     }
 }

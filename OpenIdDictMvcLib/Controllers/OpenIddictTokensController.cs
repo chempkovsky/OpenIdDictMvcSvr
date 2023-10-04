@@ -7,9 +7,11 @@ using OpenIdDictMvcLib.Dto;
 using OpenIdDictMvcLib.Localizers;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace OpenIdDictMvcLib.Controllers
 {
+    [Authorize(Roles = $"{OidcIdentityConsts.AdminRoleName}")]
     public class OpenIddictTokensController : Controller
     {
         private readonly ApplicationDbContext _context;

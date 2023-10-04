@@ -10,14 +10,12 @@ using System.Text;
 using OpenIdDictMvcLib.Helpers;
 using OpenIdDictMvcLib.Localizers;
 using System.Globalization;
-using System.Text.RegularExpressions;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 
 namespace OpenIdDictMvcLib.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = $"{OidcIdentityConsts.AdminRoleName}")]
     public class OpenIddictAppsController : Controller
     {
         private readonly ApplicationDbContext _context;

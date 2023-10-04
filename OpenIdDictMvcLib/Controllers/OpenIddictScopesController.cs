@@ -10,9 +10,11 @@ using OpenIdDictMvcLib.Dto;
 using OpenIdDictMvcLib.Helpers;
 using OpenIdDictMvcLib.Localizers;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace OpenIdDictMvcLib.Controllers
 {
+    [Authorize(Roles = $"{OidcIdentityConsts.AdminRoleName}")]
     public class OpenIddictScopesController : Controller
     {
         private readonly ApplicationDbContext _context;

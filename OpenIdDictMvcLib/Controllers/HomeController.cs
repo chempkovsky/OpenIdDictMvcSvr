@@ -16,10 +16,6 @@ namespace OpenIdDictMvcLib.Controllers
 
         public IActionResult Index()
         {
-            if( HttpContext.User != null)
-            {
-
-            }
             return View();
         }
 

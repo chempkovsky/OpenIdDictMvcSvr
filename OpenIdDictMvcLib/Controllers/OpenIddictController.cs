@@ -15,7 +15,6 @@ using OpenIdDictMvcLib.Localizers;
 using OpenIdDictMvcContext.Data;
 using OpenIdDictMvcLib.Dto;
 using OpenIdDictMvcLib.ActionAttributes;
-using static OpenIddict.Abstractions.OpenIddictConstants.Permissions;
 using OpenIdDictMvcLib.Helpers;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Client.AspNetCore;
@@ -23,7 +22,6 @@ using static OpenIddict.Client.WebIntegration.OpenIddictClientWebIntegrationCons
 using OpenIdDictMvcLib.Confs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace OpenIdDictMvcLib.Controllers
 {

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -7,11 +7,11 @@ using Microsoft.Extensions.Logging;
 using OpenIdDictMvcContext.Data;
 using OpenIdDictMvcLib.Dto;
 using OpenIdDictMvcLib.Localizers;
-using Polly;
 using System.Text;
 
 namespace OpenIdDictMvcLib.Controllers
 {
+    [Authorize(Roles = $"{OidcIdentityConsts.AdminRoleName}")]
     public class OidcGroupsController : Controller
     {
         private readonly ApplicationDbContext _context;

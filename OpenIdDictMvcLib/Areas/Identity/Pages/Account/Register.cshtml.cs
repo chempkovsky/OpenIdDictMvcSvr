@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,7 @@ using OpenIdDictMvcLib.Localizers;
 
 namespace OpenIdDictMvcLib.Areas.Identity.Pages.Account
 {
+    [Authorize(Roles = $"{OidcIdentityConsts.ManagerRoleName},{OidcIdentityConsts.AdminRoleName}")]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<OidcIdentityUser> _signInManager;

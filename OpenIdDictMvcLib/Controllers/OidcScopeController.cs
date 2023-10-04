@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -6,12 +7,11 @@ using Microsoft.Extensions.Logging;
 using OpenIdDictMvcContext.Data;
 using OpenIdDictMvcLib.Dto;
 using OpenIdDictMvcLib.Localizers;
-using Polly;
-using System.Security.Claims;
 using System.Text;
 
 namespace OpenIdDictMvcLib.Controllers
 {
+    [Authorize(Roles = $"{OidcIdentityConsts.AdminRoleName}")]
     public class OidcScopeController : Controller
     {
         private readonly ApplicationDbContext _context;
