@@ -15,12 +15,26 @@ builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+bool UseMsSql = false;
+if (builder.Configuration.GetValue<bool>("UseMsSql"))
+{
+    UseMsSql = true;
+}
+
 builder.Services.AddDbContext<ApplicationDbContext>(options => {
-    options.UseSqlServer(connectionString);
+    if (UseMsSql)
+    {
+        options.UseSqlServer(connectionString);
+    }
+    else
+    {
+        options.UseSqlite(connectionString);
+    }
     // Register the entity sets needed by OpenIddict.
     // Note: use the generic overload if you need to replace the default OpenIddict entities.
     options.UseOpenIddict<OidcApplication, OidcAuthorization, OidcScope, OidcToken, string>();
 });
+
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

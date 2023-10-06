@@ -91,6 +91,19 @@ builder.Services.AddAuthentication(options => {
 builder.Services.AddHttpContextAccessor();
 #endregion
 
+
+builder.Services.AddAuthorization(options =>
+        options.AddPolicy("HasGetCalimsScope",
+        // claim value must be one of the allowed values
+        policy => policy.RequireClaim(claimType: "scope", allowedValues: new string[] { "GetCalimsScp" }))
+      );
+builder.Services.AddAuthorization(options =>
+        options.AddPolicy("HasGetRedirScope",
+        // claim value must be one of the allowed values
+        policy => policy.RequireClaim(claimType: "scope", allowedValues: new string[] { "GetRedirScp" }))
+      );
+
+
 // Add services to the container.
 
 builder.Services.AddControllers();

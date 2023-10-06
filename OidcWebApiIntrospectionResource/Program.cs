@@ -13,7 +13,7 @@ builder.Services.AddAuthentication(options => {
     o.Authority = "https://localhost:7067/";
     o.ClientId = "OidcWebApiIntrospectionResource";
     o.ClientSecret = "OidcWebApiIntrospectionResource_secret";
-//    o.IntrospectionEndpoint= "https://localhost:7067/connect/introspect";
+    //    o.IntrospectionEndpoint= "https://localhost:7067/connect/introspect";
     if (o.Events == null) o.Events = new OAuth2IntrospectionEvents();
     o.Events.OnTokenValidated = cntxt =>
     {
@@ -46,6 +46,16 @@ builder.Services.AddAuthentication(options => {
 builder.Services.AddHttpContextAccessor();
 #endregion
 
+builder.Services.AddAuthorization(options =>
+        options.AddPolicy("HasGetCalimsScope",
+        // claim value must be one of the allowed values
+        policy => policy.RequireClaim(claimType: "scope", allowedValues: new string[] { "GetCalimsScp"}))
+      );
+builder.Services.AddAuthorization(options =>
+        options.AddPolicy("HasGetRedirScope",
+        // claim value must be one of the allowed values
+        policy => policy.RequireClaim(claimType: "scope", allowedValues: new string[] { "GetRedirScp" }))
+      );
 
 // Add services to the container.
 

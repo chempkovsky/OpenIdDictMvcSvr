@@ -41,8 +41,8 @@ builder.Services.AddAuthentication(options =>
         o.Scope.Clear();
         o.Scope.Add("openid");
         o.Scope.Add("profile");
-        o.Scope.Add("aaa");
-        o.Scope.Add("ddd");
+        o.Scope.Add("GetCalimsScp");
+        o.Scope.Add("GetRedirScp");
 
         // requests a refresh token
         o.Scope.Add("offline_access");
@@ -111,7 +111,7 @@ builder.Services.AddAuthentication(options =>
     ;
     builder.Services.AddOpenIdConnectAccessTokenManagement(o=>
     {
-        o.ClientCredentialsScope = "openid profile aaa ddd offline_access";
+        o.ClientCredentialsScope = "openid profile offline_access GetCalimsScp GetRedirScp";
     });
 //builder.Services.AddAccessTokenManagement(o =>
 //{
@@ -119,17 +119,19 @@ builder.Services.AddAuthentication(options =>
 //});
 
 
+//
+//builder.Services.AddAuthorization(options => {
+//    options.AddPolicy("MyPolicy", policy =>
+//       policy.RequireAssertion(context =>
+//       {
+//           bool r = context.User.HasClaim(c => (c.Type == "BadgeId" || c.Type == "TemporaryBadgeId")
+//           && c.Issuer == "https://microsoftsecurity");
+//           return r;
+//       }
+//    ));
+//});
+//
 
-builder.Services.AddAuthorization(options => {
-    options.AddPolicy("MyPolicy", policy =>
-       policy.RequireAssertion(context =>
-       {
-           bool r = context.User.HasClaim(c => (c.Type == "BadgeId" || c.Type == "TemporaryBadgeId")
-           && c.Issuer == "https://microsoftsecurity");
-           return r;
-       }
-    ));
-});
 
 // builder.Services.AddCors();
 

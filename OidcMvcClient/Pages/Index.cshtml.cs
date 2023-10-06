@@ -30,8 +30,8 @@ namespace OidcMvcClient.Pages
             var accessToken = await HttpContext.GetTokenAsync("access_token") ?? "";
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-            using HttpResponseMessage resp = await httpClient.GetAsync("https://localhost:7298/WeatherForecast");
-            if (resp.IsSuccessStatusCode)
+            using HttpResponseMessage resp = await httpClient.GetAsync("https://localhost:7298/Claims/GetCalims");
+            if (resp.IsSuccessStatusCode) 
             {
                 ResourceCallResult = resp.StatusCode + ":" + await resp.Content.ReadAsStringAsync();
             }
@@ -49,8 +49,8 @@ namespace OidcMvcClient.Pages
             var accessToken = await HttpContext.GetTokenAsync("access_token") ?? "";
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-            using HttpResponseMessage resp = await httpClient.GetAsync("https://localhost:7148/WeatherForecast");
-            if (resp.IsSuccessStatusCode)
+            using HttpResponseMessage resp = await httpClient.GetAsync("https://localhost:7148/Claims/GetCalims");
+            if (resp.IsSuccessStatusCode) 
             {
                 IntrospectionResourceCallResult = resp.StatusCode + ":" + await resp.Content.ReadAsStringAsync();
             }
