@@ -57,13 +57,13 @@ builder.Services.AddAuthentication(options =>
         // At the server side
         // string?[]? auds = HttpContext.GetOpenIddictServerRequest().Audiences;
         //
-        //        o.Events.OnRedirectToIdentityProvider = cntxt =>
-        //        {
-        //            cntxt.ProtocolMessage.SetParameter("audience", "xxx");
-        //            cntxt.ProtocolMessage.SetParameter("audience", "yyy");
-        //            cntxt.ProtocolMessage.SetParameter("audience", "zzz;yyy;xxx aaa bbb ccc");
-        //            return Task.CompletedTask;
-        //        };
+        o.Events.OnRedirectToIdentityProvider = cntxt =>
+        {
+            cntxt.ProtocolMessage.SetParameter("audience", "xxx");
+            cntxt.ProtocolMessage.SetParameter("audience", "yyy");
+            cntxt.ProtocolMessage.SetParameter("audience", "zzz;yyy;xxx aaa bbb ccc");
+            return Task.CompletedTask;
+        };
         // HttpContext.GetOpenIddictServerRequest().Audiences returns string[] {"zzz;yyy;xxx aaa bbb ccc"}
         //
 

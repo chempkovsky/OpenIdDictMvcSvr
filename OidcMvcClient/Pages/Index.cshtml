@@ -84,9 +84,14 @@
 @if (IsAuthenticated)
 {
         <div class="row">
-            <form class="d-inline" asp-page-handler="makecall" method="post">
-                    <button class="btn btn-primary">Make external WebApi method call</button>
-            </form>
+            
+                <form class="col" asp-page-handler="WebApiMakecall" method="post">
+                        <button class="btn btn-primary">Make external WebApi method call</button>
+                </form>
+            
+                <form class="col" asp-page-handler="WebApiRedirMakecall" method="post">
+                        <button class="btn btn-primary">Make external WebApi Redir method call</button>
+                </form>
         </div>
 
     @if (!string.IsNullOrEmpty(Model.ResourceCallResult))
@@ -100,8 +105,11 @@
     <p/>
 
         <div class="row">
-            <form class="d-inline" asp-page-handler="WebApiIntrospectionMakecall" method="post">
+            <form class="col" asp-page-handler="WebApiIntrospectionMakecall" method="post">
                 <button class="btn btn-primary">Make external Introspection WebApi method call</button>
+            </form>
+            <form class="col" asp-page-handler="WebApiRedirIntrospectionMakecall" method="post">
+                <button class="btn btn-primary">Make external Introspection WebApi Redir method call</button>
             </form>
         </div>
 

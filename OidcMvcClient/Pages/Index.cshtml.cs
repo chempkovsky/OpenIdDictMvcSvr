@@ -23,7 +23,7 @@ namespace OidcMvcClient.Pages
             if (User != null) return;
         }
 
-        public async Task OnPostMakecall()
+        public async Task OnPostWebApiMakecall()
         {
             using var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -42,13 +42,32 @@ namespace OidcMvcClient.Pages
             ResourceCallResult = ResourceCallResult.Replace("},{", "},\n{");
         }
 
-        public async Task OnPostWebApiIntrospectionMakecall()
+        public async Task OnPostWebApiRedirMakecall()
         {
             using var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var accessToken = await HttpContext.GetTokenAsync("access_token") ?? "";
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
+            using HttpResponseMessage resp = await httpClient.GetAsync("https://localhost:7298/Claims/GetRedirCalims");
+            if (resp.IsSuccessStatusCode)
+            {
+                ResourceCallResult = resp.StatusCode + ":" + await resp.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                ResourceCallResult = resp.StatusCode + ":" + resp.ReasonPhrase ?? "ReasonPhrase is empty";
+            }
+            ResourceCallResult = ResourceCallResult.Replace("},{", "},\n{");
+        }
+
+
+        public async Task OnPostWebApiIntrospectionMakecall()
+        {
+            using var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var accessToken = await HttpContext.GetTokenAsync("access_token") ?? "";
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             using HttpResponseMessage resp = await httpClient.GetAsync("https://localhost:7148/Claims/GetCalims");
             if (resp.IsSuccessStatusCode) 
             {
@@ -61,7 +80,24 @@ namespace OidcMvcClient.Pages
             IntrospectionResourceCallResult = IntrospectionResourceCallResult.Replace("},{", "},\n{");
         }
 
-        
+        public async Task OnPostWebApiRedirIntrospectionMakecall()
+        {
+            using var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var accessToken = await HttpContext.GetTokenAsync("access_token") ?? "";
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            using HttpResponseMessage resp = await httpClient.GetAsync("https://localhost:7148/Claims/GetRedirCalims");
+            if (resp.IsSuccessStatusCode)
+            {
+                IntrospectionResourceCallResult = resp.StatusCode + ":" + await resp.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                IntrospectionResourceCallResult = resp.StatusCode + ":" + resp.ReasonPhrase ?? "ReasonPhrase is empty";
+            }
+            IntrospectionResourceCallResult = IntrospectionResourceCallResult.Replace("},{", "},\n{");
+        }
+
 
     }
 }

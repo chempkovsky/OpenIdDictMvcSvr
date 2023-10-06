@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Immutable;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 
 namespace OidcWebApiResource.Controllers
@@ -35,17 +37,21 @@ namespace OidcWebApiResource.Controllers
         [HttpGet]
         [Route("[controller]/GetRedirCalims")]
         [Authorize(Policy = "HasGetRedirScope")]
-        public IEnumerable<ClaimDto> GetRedirCalims()
+        public async Task<string> GetRedirCalimsAsync()
         {
-            var rslt = User.Claims.Select(c => new ClaimDto
+            using var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var accessToken = await HttpContext.GetTokenAsync("access_token") ?? "";
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            using HttpResponseMessage resp = await httpClient.GetAsync("https://localhost:7148/Claims/GetCalims");
+            if (resp.IsSuccessStatusCode)
             {
-                Value = c.Value,
-                Type = c.Type,
-                //Issuer = c.Issuer,
-                //OriginalIssuer = c.Issuer,
-                //ValueType = c.ValueType
-            }).ToList();
-            return rslt;
+                return resp.StatusCode + ":" + await resp.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                return resp.StatusCode + ":" + resp.ReasonPhrase ?? "ReasonPhrase is empty";
+            }
         }
 
     }
