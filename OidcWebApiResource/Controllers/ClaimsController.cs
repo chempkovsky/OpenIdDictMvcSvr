@@ -63,6 +63,8 @@ namespace OidcWebApiResource.Controllers
                 new KeyValuePair<string, string>("client_secret", "OidcWebApiResourceGetToken_Secret"),
                 new KeyValuePair<string, string>("grant_type", "client_credentials"),
                 new KeyValuePair<string, string>("scope", "openid GetCalimsScp"),
+                new KeyValuePair<string, string>("audience", "OidcWebApiIntrospectionResource"),
+                new KeyValuePair<string, string>("audience", "OidcWebApiResource"),
             };
             using HttpResponseMessage resp = await httpClient.PostAsync("https://localhost:7067/connect/token", new FormUrlEncodedContent(requestData));
             if (resp.IsSuccessStatusCode)
