@@ -27,6 +27,7 @@
     }
     if (IsAuthenticated)
     {
+        await HttpContext.RevokeRefreshTokenAsync(); // <<<---- add this line
 
         currentDatetime = DateTime.UtcNow.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffffK");
         // var handler = new JwtSecurityTokenHandler();
@@ -36,7 +37,7 @@
 
         // jAccessToken = await _tokenManagementService.GetAccessTokenAsync(User);
 
-        // await HttpContext.RevokeRefreshTokenAsync();
+        
 
 
         //
@@ -65,7 +66,7 @@
         //
 
         jAccessToken = await HttpContext.GetUserAccessTokenAsync();
-        ClientCredentialsToken clientCredentialsToken = await HttpContext.GetClientAccessTokenAsync();
+        // ClientCredentialsToken clientCredentialsToken = await HttpContext.GetClientAccessTokenAsync();
         // must be called right after GetClientAccessTokenAsync()-method call since GetUserAccessTokenAsync() refreshes HttpContext
         accessToken = await HttpContext.GetTokenAsync("access_token") ?? "";
         idToken = await HttpContext.GetTokenAsync("id_token") ?? "";

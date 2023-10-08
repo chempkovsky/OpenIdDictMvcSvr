@@ -23,10 +23,10 @@ builder.Services.AddAuthentication(options =>
          options => { 
              options.LoginPath = "/Account/Login/";
              options.LogoutPath = "/Account/Logout";
-             options.Events.OnSigningOut = async e =>
-             {
-                 await e.HttpContext.RevokeRefreshTokenAsync();
-             };
+             //options.Events.OnSigningOut = async e =>
+             //{
+             //    await e.HttpContext.RevokeRefreshTokenAsync();
+             //};
          }
     )
     .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, o =>
@@ -37,7 +37,7 @@ builder.Services.AddAuthentication(options =>
         o.ResponseType = OpenIdConnectResponseType.Code; // OpenIdConnectResponseType.CodeIdTokenToken; // "code id_token token";
         o.ResponseMode = OpenIdConnectResponseMode.Query;
         o.UsePkce = true; // o.UsePkce = false; // o.UsePkce = true;
-        o.SaveTokens = false;
+        o.SaveTokens = true;
         o.GetClaimsFromUserInfoEndpoint = true;
         o.SignedOutCallbackPath = "/signout-callback-oidc"; // "/signout-callback-oidc" is a default endpoint. Do not use "signout-oidc"
         o.SignedOutRedirectUri = "/Account/PostLogout";
@@ -122,7 +122,7 @@ builder.Services.AddOpenIdConnectAccessTokenManagement(o=>
     {
         o.ClientCredentialsScope = "openid profile offline_access GetCalimsScp GetRedirScp";
         o.ClientCredentialsResource = "OidcWebApiResource OidcWebApiIntrospectionResource";
-        o.DPoPJsonWebKey = "jwk";
+     //   o.DPoPJsonWebKey = "jwk";
     });
 //builder.Services.AddAccessTokenManagement(o =>
 //{
