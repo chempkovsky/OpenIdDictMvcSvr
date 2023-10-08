@@ -215,7 +215,9 @@ builder.Services.AddOpenIddict()
                    .SetLogoutEndpointUris("connect/logout")
                    .SetTokenEndpointUris("connect/token")
                    .SetUserinfoEndpointUris("connect/userinfo")
+                   .SetRevocationEndpointUris("/connect/revoke")
                    .SetVerificationEndpointUris("connect/verify");
+
 
             // Note: this sample uses the code, device code, password and refresh token flows, but you
             // can enable the other flows if you need to support implicit or client credentials.

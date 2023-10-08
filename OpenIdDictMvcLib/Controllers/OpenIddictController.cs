@@ -22,6 +22,7 @@ using static OpenIddict.Client.WebIntegration.OpenIddictClientWebIntegrationCons
 using OpenIdDictMvcLib.Confs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
+using System.Security.Cryptography;
 
 namespace OpenIdDictMvcLib.Controllers
 {
@@ -445,7 +446,17 @@ namespace OpenIdDictMvcLib.Controllers
                 return NotFound();
             }
 
-            return Redirect("~/");
+            string respUrl = "~/";
+            if(!string.IsNullOrEmpty(request.PostLogoutRedirectUri))
+            {
+                // remove "signout-callback-oidc"-tail
+                respUrl = request.PostLogoutRedirectUri;
+                if (respUrl.EndsWith('/'))
+                    respUrl += "../";
+                else
+                    respUrl += "/../";
+            }
+            return Redirect(respUrl);
         }
 
 

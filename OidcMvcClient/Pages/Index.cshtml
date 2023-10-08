@@ -16,7 +16,7 @@
     string currentDatetime = "";
     //JwtSecurityToken? jAccessToken = null ;
     UserToken? jAccessToken = null;
-    
+
     JwtSecurityToken? jIdToken = null ;
     JwtSecurityToken? jRefreshToken = null ;
     List<Claim>? scopes = null;
@@ -33,9 +33,11 @@
         // jAccessToken = handler.ReadJwtToken(accessToken);
         // jIdToken = handler.ReadJwtToken(idToken);
         // jRefreshToken = handler.ReadJwtToken(refreshToken);
-        //jAccessToken = await _tokenManagementService.GetAccessTokenAsync(User);
 
-        
+        // jAccessToken = await _tokenManagementService.GetAccessTokenAsync(User);
+
+        // await HttpContext.RevokeRefreshTokenAsync();
+
 
         //
         // https://github.com/DuendeSoftware/Duende.AccessTokenManagement/wiki/worker-applications
@@ -63,6 +65,7 @@
         //
 
         jAccessToken = await HttpContext.GetUserAccessTokenAsync();
+        ClientCredentialsToken clientCredentialsToken = await HttpContext.GetClientAccessTokenAsync();
         // must be called right after GetClientAccessTokenAsync()-method call since GetUserAccessTokenAsync() refreshes HttpContext
         accessToken = await HttpContext.GetTokenAsync("access_token") ?? "";
         idToken = await HttpContext.GetTokenAsync("id_token") ?? "";

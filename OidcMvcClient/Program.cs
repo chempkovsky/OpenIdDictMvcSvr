@@ -7,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using OidcMvcClient;
+using Microsoft.AspNetCore.Authentication;
 
 
 // https://github.com/onelogin/openid-connect-dotnet-core-sample/blob/master/Startup.cs
@@ -22,6 +23,10 @@ builder.Services.AddAuthentication(options =>
          options => { 
              options.LoginPath = "/Account/Login/";
              options.LogoutPath = "/Account/Logout";
+             options.Events.OnSigningOut = async e =>
+             {
+                 await e.HttpContext.RevokeRefreshTokenAsync();
+             };
          }
     )
     .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, o =>
@@ -32,7 +37,7 @@ builder.Services.AddAuthentication(options =>
         o.ResponseType = OpenIdConnectResponseType.Code; // OpenIdConnectResponseType.CodeIdTokenToken; // "code id_token token";
         o.ResponseMode = OpenIdConnectResponseMode.Query;
         o.UsePkce = true; // o.UsePkce = false; // o.UsePkce = true;
-        o.SaveTokens = true;
+        o.SaveTokens = false;
         o.GetClaimsFromUserInfoEndpoint = true;
         o.SignedOutCallbackPath = "/signout-callback-oidc"; // "/signout-callback-oidc" is a default endpoint. Do not use "signout-oidc"
         o.SignedOutRedirectUri = "/Account/PostLogout";
@@ -43,7 +48,6 @@ builder.Services.AddAuthentication(options =>
         o.Scope.Add("profile");
         o.Scope.Add("GetCalimsScp");
         o.Scope.Add("GetRedirScp");
-
         // requests a refresh token
         o.Scope.Add("offline_access");
 
@@ -57,13 +61,13 @@ builder.Services.AddAuthentication(options =>
         // At the server side
         // string?[]? auds = HttpContext.GetOpenIddictServerRequest().Audiences;
         //
-        o.Events.OnRedirectToIdentityProvider = cntxt =>
-        {
-            cntxt.ProtocolMessage.SetParameter("audience", "xxx");
-            cntxt.ProtocolMessage.SetParameter("audience", "yyy");
-            cntxt.ProtocolMessage.SetParameter("audience", "zzz;yyy;xxx aaa bbb ccc");
-            return Task.CompletedTask;
-        };
+        //o.Events.OnRedirectToIdentityProvider = cntxt =>
+        //{
+        //    cntxt.ProtocolMessage.SetParameter("audience", "xxx");
+        //    cntxt.ProtocolMessage.SetParameter("audience", "yyy");
+        //    cntxt.ProtocolMessage.SetParameter("audience", "zzz;yyy;xxx aaa bbb ccc");
+        //    return Task.CompletedTask;
+        //};
         // HttpContext.GetOpenIddictServerRequest().Audiences returns string[] {"zzz;yyy;xxx aaa bbb ccc"}
         //
 
@@ -109,9 +113,16 @@ builder.Services.AddAuthentication(options =>
     //    // o.IntrospectionEndpoint = "https://localhost:7067/"
     //});
     ;
-    builder.Services.AddOpenIdConnectAccessTokenManagement(o=>
+//
+// Demonstrating Proof of Possession (DPoP) is an application-level mechanism for sender-constraining OAuth
+// [RFC6749] access and refresh tokens.
+// https://datatracker.ietf.org/doc/html/rfc9449
+//
+builder.Services.AddOpenIdConnectAccessTokenManagement(o=>
     {
         o.ClientCredentialsScope = "openid profile offline_access GetCalimsScp GetRedirScp";
+        o.ClientCredentialsResource = "OidcWebApiResource OidcWebApiIntrospectionResource";
+        o.DPoPJsonWebKey = "jwk";
     });
 //builder.Services.AddAccessTokenManagement(o =>
 //{
