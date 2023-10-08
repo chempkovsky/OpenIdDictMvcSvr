@@ -27,7 +27,7 @@
     }
     if (IsAuthenticated)
     {
-        await HttpContext.RevokeRefreshTokenAsync(); // <<<---- add this line
+        // await HttpContext.RevokeRefreshTokenAsync(); // <<<---- add this line
 
         currentDatetime = DateTime.UtcNow.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffffK");
         // var handler = new JwtSecurityTokenHandler();
