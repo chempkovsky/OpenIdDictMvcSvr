@@ -23,10 +23,10 @@ builder.Services.AddAuthentication(options =>
          options => { 
              options.LoginPath = "/Account/Login/";
              options.LogoutPath = "/Account/Logout";
-             //options.Events.OnSigningOut = async e =>
-             //{
-             //    await e.HttpContext.RevokeRefreshTokenAsync();
-             //};
+             options.Events.OnSigningOut = async e =>
+             {
+                 await e.HttpContext.RevokeRefreshTokenAsync();
+             };
          }
     )
     .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, o =>
