@@ -40,9 +40,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenIdDictMvcLib", "OpenIdD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenIdDictMvcContext", "OpenIdDictMvcContext\OpenIdDictMvcContext.csproj", "{A48AE910-2BE0-4621-B7C2-5E00F18BF402}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIdDictDbMigrator", "OpenIdDictDbMigrator\OpenIdDictDbMigrator.csproj", "{651E4E90-3400-4A2B-8FF8-02A67F2E0B91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenIdDictDbMigrator", "OpenIdDictDbMigrator\OpenIdDictDbMigrator.csproj", "{651E4E90-3400-4A2B-8FF8-02A67F2E0B91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIdDictCert", "OpenIdDictCert\OpenIdDictCert.csproj", "{C8D75AEE-CB7C-4540-BEEB-23DA13142E5F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenIdDictCert", "OpenIdDictCert\OpenIdDictCert.csproj", "{C8D75AEE-CB7C-4540-BEEB-23DA13142E5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OidcStarterMvcClient", "OidcStarterMvcClient\OidcStarterMvcClient.csproj", "{0B5EF8A7-62F0-423A-B633-A484C05B894F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -90,6 +92,10 @@ Global
 		{C8D75AEE-CB7C-4540-BEEB-23DA13142E5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8D75AEE-CB7C-4540-BEEB-23DA13142E5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8D75AEE-CB7C-4540-BEEB-23DA13142E5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B5EF8A7-62F0-423A-B633-A484C05B894F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B5EF8A7-62F0-423A-B633-A484C05B894F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B5EF8A7-62F0-423A-B633-A484C05B894F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B5EF8A7-62F0-423A-B633-A484C05B894F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
