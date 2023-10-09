@@ -5,27 +5,6 @@ VisualStudioVersion = 17.7.34009.444
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenIdDictMvcSvr", "OpenIdDictMvcSvr\OpenIdDictMvcSvr.csproj", "{1C0B060E-7F75-410B-9EC8-A2C0B98FE032}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Readme", "Readme", "{9A9E7287-76B6-4D77-9DDF-D12A03E3AEEC}"
-	ProjectSection(SolutionItems) = preProject
-		01-IdentityLocalizerResource.cs.txt = 01-IdentityLocalizerResource.cs.txt
-		02-Program.cs.txt = 02-Program.cs.txt
-		03-IdentityLocalizerResource.ru.resx.txt = 03-IdentityLocalizerResource.ru.resx.txt
-		04-AreasIdentityPagesAccount.txt = 04-AreasIdentityPagesAccount.txt
-		05-IEmailSender.txt = 05-IEmailSender.txt
-		06-IdentityRoleDto.txt = 06-IdentityRoleDto.txt
-		07-IdentityUserDto.txt = 07-IdentityUserDto.txt
-		08-IdentityUserRoleDto.txt = 08-IdentityUserRoleDto.txt
-		09-OpenIdDictLibrary.txt = 09-OpenIdDictLibrary.txt
-		100-OidcDictDeviceConsole.png = 100-OidcDictDeviceConsole.png
-		100-OidcDictDeviceConsole.txt = 100-OidcDictDeviceConsole.txt
-		110-OidcMvcClient.png = 110-OidcMvcClient.png
-		110-OidcMvcClient.txt = 110-OidcMvcClient.txt
-		110-OpeIdDictMvcClient.txt = 110-OpeIdDictMvcClient.txt
-		OpenIddictController.cs.2.txt = OpenIddictController.cs.2.txt
-		OpenIddictController.cs.txt = OpenIddictController.cs.txt
-		Verify.cshtml.txt = Verify.cshtml.txt
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OidcDictDeviceConsole", "OidcDictDeviceConsole\OidcDictDeviceConsole.csproj", "{03684517-8D0F-4727-8F78-7C9D07308482}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OidcDictClientCredentialsConsole", "OidcDictClientCredentialsConsole\OidcDictClientCredentialsConsole.csproj", "{E433DD03-4619-4AFF-808B-3BC28E9FBDF0}"

@@ -1,6 +1,0 @@
-==1==
-Using "Add templated Item" all identity pages have been added
-
-==2==
-Localization of internal classes according to the post:
-https://stackoverflow.com/questions/59537939/localization-on-data-annotation-and-error-validation-messages-in-asp-net-core-3/59539497#59539497
