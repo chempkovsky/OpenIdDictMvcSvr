@@ -12,7 +12,7 @@ namespace OpenIdDictMvcContext.Data
                    .WithMany(e => e.UserScopes)
                    .HasForeignKey(e => e.OidcUserId)
                    .IsRequired()
-                   .OnDelete(DeleteBehavior.ClientCascade);
+                   .OnDelete(DeleteBehavior.Cascade);
             builder.Property(b => b.OidcAppName).IsRequired().HasMaxLength(100);
             builder.Property(b => b.OidcScopes).IsRequired().HasMaxLength(500);
         }

@@ -33,7 +33,7 @@ builder.Services.AddAuthentication(options =>
     {
         o.ClientId = "OidcMvcClient";
         o.ClientSecret = "OidcMvcClient_secrete";
-        o.Authority = "https://localhost:7067/";
+        o.Authority = "https://auth.rupbes.by/";
         o.ResponseType = OpenIdConnectResponseType.Code; // OpenIdConnectResponseType.CodeIdTokenToken; // "code id_token token";
         o.ResponseMode = OpenIdConnectResponseMode.Query;
         o.UsePkce = true; // o.UsePkce = false; // o.UsePkce = true;

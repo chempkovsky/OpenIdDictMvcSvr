@@ -388,6 +388,9 @@
     <value>Привет</value>
     <comment>In the file Views/Shared/_LoginPartial.cshtml</comment>
   </data>
+  <data name="Help for the user" xml:space="preserve">
+    <value>Помощь пользователю</value>
+  </data>
   <data name="Home" xml:space="preserve">
     <value>Домашняя страница</value>
     <comment>In the file Views/Shared/_Layout.cshtml</comment>
@@ -1026,5 +1029,8 @@
   <data name="{Name} logged in with {LoginProvider} provider." xml:space="preserve">
     <value>{Name} вошел в систему с провайдером {LoginProvider}.</value>
     <comment>In the file Areas/Identity/Pages/Account/ExternalLogin.cs</comment>
+  </data>
+  <data name="«RUP «Belenergostroy» - holding management company»" xml:space="preserve">
+    <value>«РУП «Белэнергострой» - управляющая компания холдинга»</value>
   </data>
 </root>

@@ -42,18 +42,23 @@ void CreteCertAndCertRequest(X509KeyUsageFlags Flags,
     Console.WriteLine(PfxFileName + " has been created");
 }
 
+//
+// https://docs.orchardcore.net/fr/latest/docs/reference/modules/OpenId/
+//
 
-CreteCertAndCertRequest(X509KeyUsageFlags.KeyEncipherment,
-                        "authsrv.rupbes.by", "rupbes.by Encryption Certificate", "BY",
-                        "authsrv-encryption-certificate-request.der", "authsrv-encryption-certificate-request.pem", "Self Signed Encryption Certificate for authsrv.rupbes.by",
-                        "authsrv-encryption-certificate-self-signed.pfx", "Qq?01011967");
+    CreteCertAndCertRequest(X509KeyUsageFlags.KeyEncipherment,
+    "auth.rupbes.by", "auth.rupbes.by Encryption Certificate", "BY",
+    "auth-encryption-certificate-request.der", "auth-encryption-certificate-request.pem", 
+    "Self Signed Encryption Certificate for auth.rupbes.by",
+    "auth-encryption-certificate-self-signed.pfx", "Qq?01011967");
 
-CreteCertAndCertRequest(X509KeyUsageFlags.DigitalSignature,
-                        "authsrv.rupbes.by", "rupbes.by Signing Certificate", "BY",
-                        "authsrv-signing-certificate-request.der", "authsrv-signing-certificate-request.pem", "Self Signed Signing Certificate for authsrv.rupbes.by",
-                        "authsrv-signing-certificate-self-signed.pfx", "Qq?01011967");
+    CreteCertAndCertRequest(X509KeyUsageFlags.DigitalSignature,
+    "auth.rupbes.by", "auth.rupbes.by Signing Certificate", "BY",
+    "auth-signing-certificate-request.der", "auth-signing-certificate-request.pem", 
+    "Self Signed Signing Certificate for auth.rupbes.by",
+    "auth-signing-certificate-self-signed.pfx", "Qq?01011967");
 
-
+/*
 CreteCertAndCertRequest(X509KeyUsageFlags.KeyEncipherment,
                         "authclt.rupbes.by", "rupbes.by Encryption Certificate", "BY",
                         "authclt-encryption-certificate-request.der", "authclt-encryption-certificate-request.pem", "Self Signed Encryption Certificate for authclt.rupbes.by",
@@ -74,3 +79,4 @@ CreteCertAndCertRequest(X509KeyUsageFlags.DigitalSignature,
                         "corp.rupbes.by", "rupbes.by Signing Certificate", "BY",
                         "corp-signing-certificate-request.der", "corp-signing-certificate-request.pem", "Self Signed Signing Certificate for corp.rupbes.by",
                         "corp-signing-certificate-self-signed.pfx", "Qq?01011967");
+*/

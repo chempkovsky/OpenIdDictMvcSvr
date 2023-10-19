@@ -30,6 +30,12 @@
     <ProjectReference Include="..\OpenIdDictMvcContext\OpenIdDictMvcContext.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\logotype.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
   <!--<ItemGroup>
     <EmbeddedResource Update="Resources\Localizers\ClaimLocalizerResource.ru.resx">
       <SubType>Designer</SubType>

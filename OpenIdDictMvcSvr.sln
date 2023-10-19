@@ -23,7 +23,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenIdDictDbMigrator", "Ope
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenIdDictCert", "OpenIdDictCert\OpenIdDictCert.csproj", "{C8D75AEE-CB7C-4540-BEEB-23DA13142E5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OidcStarterMvcClient", "OidcStarterMvcClient\OidcStarterMvcClient.csproj", "{0B5EF8A7-62F0-423A-B633-A484C05B894F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OidcStarterMvcClient", "OidcStarterMvcClient\OidcStarterMvcClient.csproj", "{0B5EF8A7-62F0-423A-B633-A484C05B894F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RusDocs", "RusDocs", "{40F1E00D-8F77-4D79-883E-967AC19DEEA2}"
+	ProjectSection(SolutionItems) = preProject
+		SetupCertsForOpenIdDic.docx = SetupCertsForOpenIdDic.docx
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

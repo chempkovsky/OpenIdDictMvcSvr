@@ -33,4 +33,10 @@
     <ProjectReference Include="..\OpenIdDictMvcLib\OpenIdDictMvcLib.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\logotype.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

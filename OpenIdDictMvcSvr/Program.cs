@@ -7,8 +7,61 @@ using OpenIdDictMvcLib.Confs;
 using OpenIdDictMvcContext.Data;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
+using System.Runtime.ConstrainedExecution;
+using System.Security.Cryptography;
+using System.Runtime.InteropServices;
+using Microsoft.CodeAnalysis;
+using System.Xml.Linq;
+using System.Collections.Immutable;
+using Org.BouncyCastle.Tls;
+using Org.BouncyCastle.Ocsp;
+
+static X509Certificate2? GetCertificate(StoreLocation location, StoreName name, string thumbprint)
+{
+    using var store = new X509Store(name, location);
+    store.Open(OpenFlags.ReadOnly);
+
+    var certificates = store.Certificates.Find(X509FindType.FindByThumbprint, thumbprint, validOnly: false);
+
+    return certificates.Count switch
+    {
+        0 => null,
+        1 => certificates[0],
+        _ => throw new InvalidOperationException("Multiple certificates with the same thumbprint were found."),
+    };
+}
+
+
+
+
+
+static RSA GenerateRsaSecurityKey(int size)
+{
+    // By default, the default RSA implementation used by .NET Core relies on the newest Windows CNG APIs.
+    // Unfortunately, when a new key is generated using the default RSA.Create() method, it is not bound
+    // to the machine account, which may cause security exceptions when running Orchard on IIS using a
+    // virtual application pool identity or without the profile loading feature enabled (off by default).
+    // To ensure a RSA key can be generated flawlessly, it is manually created using the managed CNG APIs.
+    // For more information, visit https://github.com/openiddict/openiddict-core/issues/204.
+    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+    {
+        // Warning: ensure a null key name is specified to ensure the RSA key is not persisted by CNG.
+        var key = CngKey.Create(CngAlgorithm.Rsa, keyName: null, new CngKeyCreationParameters
+        {
+            ExportPolicy = CngExportPolicies.AllowPlaintextExport,
+            KeyCreationOptions = CngKeyCreationOptions.MachineKey,
+            Parameters = { new CngProperty("Length", BitConverter.GetBytes(size), CngPropertyOptions.None) }
+        });
+
+        return new RSACng(key);
+    }
+
+    return RSA.Create(size);
+}
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 // Add IConfiguration service
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
@@ -173,6 +226,7 @@ builder.Services.AddOpenIddict()
         })
         .AddServer(options =>
         {
+
             int reftklf = 0;
             if (tokenLifetime.AccessTokenLifetimeFromMinutes.HasValue && tokenLifetime.AccessTokenLifetimeFromMinutes.Value > 0)
             {
@@ -235,50 +289,68 @@ builder.Services.AddOpenIddict()
                 .AllowHybridFlow()
                 .AllowImplicitFlow();
 
-            options.RegisterScopes(new string[] { "api", "bbb", "aaa" });
+            options.RegisterScopes(new string[] { "openid", "offline_access", "subject", "profile", "email", "roles", });
 
-
-            //https://documentation.openiddict.com/configuration/encryption-and-signing-credentials.html
-            //OpenIdDict uses two types of credentials to secure the token it issues.
-            //1.Encryption credentials are used to ensure the content of tokens cannot be read by malicious parties
-            if (!string.IsNullOrEmpty(builder.Configuration["Identity:Certificates:EncryptionCertificatePath"]))
+            //
+            // https://documentation.openiddict.com/configuration/encryption-and-signing-credentials.html
+            // OpenIdDict uses two types of credentials to secure the token it issues.
+            // 1.Encryption credentials are used to ensure the content of tokens cannot be read by malicious parties
+            //
+            // 2. Note: when issuing access tokens used by third-party APIs
+            //    you don't own, you can disable access token encryption:
+            //
+            if (tokenEncryption.DisableAccessTokenEncryption.HasValue && tokenEncryption.DisableAccessTokenEncryption.Value)
             {
-                var encryptionKeyBytes = File.ReadAllBytes(builder.Configuration["Identity:Certificates:EncryptionCertificatePath"]);
-                X509Certificate2 encryptionKey = new(encryptionKeyBytes, builder.Configuration["Identity:EncryptionCertificateKey"],
-                     X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.EphemeralKeySet);
-                options.AddEncryptionCertificate(encryptionKey);
+                // we should add something to avoid throwing OpenIdDict exception
+                options.AddEphemeralEncryptionKey();
+                //when integration with third-party APIs/resource servers is desired
+                options.DisableAccessTokenEncryption();
+
             }
             else
             {
-                // byte[] keyForSymmetric256 = new byte[32];
-                // var randomGen = RandomNumberGenerator.Create();
-                // randomGen.GetBytes(keyForSymmetric256);
-                // string base64Str =  Convert.ToBase64String(keyForSymmetric256);
-                // var encryptionKey = new SymmetricSecurityKey(Convert.FromBase64String(base64Str));
-                options.AddEncryptionKey(new SymmetricSecurityKey(Convert.FromBase64String("HKWKHaGFRyiUfgqKdAHOefFqzs44/U26bKPOw3Lk9yY="))); // <-- require KeySize = 256
+                if (tokenEncryption.EncryptionCertificateStoreLocation.HasValue && 
+                    tokenEncryption.EncryptionCertificateStoreName.HasValue &&
+                    (!string.IsNullOrEmpty(tokenEncryption.EncryptionCertificateThumbprint)))
+                {
+                    var certificateE = GetCertificate(tokenEncryption.EncryptionCertificateStoreLocation.Value, tokenEncryption.EncryptionCertificateStoreName.Value, tokenEncryption.EncryptionCertificateThumbprint);
+                    if (certificateE != null)
+                    {
+                        options.AddEncryptionKey(new X509SecurityKey(certificateE));
+                    }
+                }
+                else
+                {
+                    options.AddEncryptionKey(new SymmetricSecurityKey(Convert.FromBase64String("HKWKHaGFRyiUfgqKdAHOefFqzs44/U26bKPOw3Lk9yY="))); // <-- require KeySize = 256
+                    
+                }
             }
+
 
             //2.Signing credentials are used to protect against tampering
-            if (!string.IsNullOrEmpty(builder.Configuration["Identity:Certificates:SigningCertificatePath"]))
+            if (tokenEncryption.SigningCertificateStoreLocation.HasValue &&
+                tokenEncryption.SigningCertificateStoreName.HasValue &&
+                (!string.IsNullOrEmpty(tokenEncryption.SigningCertificateThumbprint)))
             {
-                var signingKeyBytes = File.ReadAllBytes(builder.Configuration["Identity:Certificates:SigningCertificatePath"]);
-                X509Certificate2 signingKey = new(signingKeyBytes, builder.Configuration["Identity:SigningCertificateKey"],
-                     X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.EphemeralKeySet);
-                options
-                .AddSigningCertificate(signingKey);
+
+                //var signingKeyBytes = File.ReadAllBytes("C:\\Development\\OpenIdDictMvcSvr\\OpenIdDictMvcSvr\\localhost-signing-certificate-self-signed.pfx");
+                //X509Certificate2 signingKey = new(rawData: signingKeyBytes, password: "Qq?01011967");
+                //,keyStorageFlags: X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.EphemeralKeySet);
+                //options.AddSigningCertificate(signingKey);
+                
+                options.AddSigningCertificate(thumbprint: tokenEncryption.SigningCertificateThumbprint, 
+                                              name: tokenEncryption.SigningCertificateStoreName.Value, 
+                                              location: tokenEncryption.SigningCertificateStoreLocation.Value);
             }
             else
             {
-                options.AddDevelopmentSigningCertificate();
+                options.AddSigningKey(new SymmetricSecurityKey(Convert.FromBase64String("HKWKHaGFRyiUfgqKdAHOefFqzs44/U26bKPOw3Lk9yY="))); // <-- require KeySize = 256
             }
+
 
             // Force client applications to use Proof Key for Code Exchange (PKCE).
             options.RequireProofKeyForCodeExchange();
 
-
-            //when integration with third-party APIs/resource servers is desired
-            //options
-            //    .DisableAccessTokenEncryption();
 
             // Register the ASP.NET Core host and configure the ASP.NET Core-specific options.
             options.UseAspNetCore()
@@ -321,10 +393,10 @@ builder.Services.AddOpenIddict()
             // Note: when issuing access tokens used by third-party APIs
             // you don't own, you can disable access token encryption:
             //
-            if ((tokenEncryption.DisableAccessTokenEncryption != null) && (tokenEncryption.DisableAccessTokenEncryption.Value))
-            {
-                options.DisableAccessTokenEncryption();
-            }
+            //if ((tokenEncryption.DisableAccessTokenEncryption != null) && (tokenEncryption.DisableAccessTokenEncryption.Value))
+            //{
+            //    options.DisableAccessTokenEncryption();
+            //}
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         })
         // Register the OpenIddict validation components.
